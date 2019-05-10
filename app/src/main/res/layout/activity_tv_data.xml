@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activity.TvDataActivity">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/image_poster"
+                android:layout_width="wrap_content"
+                android:layout_height="200dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/txtTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/image_poster"
+                tools:text="Title" />
+
+            <TextView
+                android:id="@+id/txtFirstAirDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+                tools:text="2001-01-01" />
+
+            <TextView
+                android:id="@+id/txtNumberSeason"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintStart_toEndOf="@+id/txtFirstAirDate"
+                app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+                tools:text="10" />
+
+            <TextView
+                android:id="@+id/txtNumberSeasonTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintStart_toEndOf="@+id/txtNumberSeason"
+                app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+                tools:text="temporadas" />
+
+            <TextView
+                android:id="@+id/txtNumberEpisodes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintStart_toEndOf="@+id/txtNumberSeasonTitle"
+                app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+                tools:text="10" />
+
+            <TextView
+                android:id="@+id/txtNumberEpisodesTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintStart_toEndOf="@+id/txtNumberEpisodes"
+                app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+                tools:text="capitulos" />
+
+            <TextView
+                android:id="@+id/txtDescription"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtFirstAirDate"
+                tools:text="Descripcion" />
+
+            <TextView
+                android:id="@+id/txtHomepageTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/homepage"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtDescription" />
+
+            <TextView
+                android:id="@+id/txtHomepage"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toEndOf="@+id/txtHomepageTitle"
+                app:layout_constraintTop_toTopOf="@+id/txtHomepageTitle"
+                tools:text="www.abcdefg.com" />
+
+            <TextView
+                android:id="@+id/txtPopularityTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/popularityVideoData"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtHomepageTitle" />
+
+            <TextView
+                android:id="@+id/txtPopularity"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                app:layout_constraintStart_toEndOf="@+id/txtPopularityTitle"
+                app:layout_constraintTop_toTopOf="@+id/txtPopularityTitle"
+                tools:text="123456" />
+
+
+            <TextView
+                android:id="@+id/vote_average"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="12dp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toEndOf="@+id/txtNumberEpisodesTitle"
+                app:layout_constraintTop_toBottomOf="@+id/txtTitle"
+                tools:text="8.0" />
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:scaleType="fitCenter"
+                android:layout_marginStart="3dp"
+                android:src="@drawable/star_rate"
+                app:layout_constraintBottom_toBottomOf="@+id/vote_average"
+                app:layout_constraintStart_toEndOf="@+id/vote_average"
+                app:layout_constraintTop_toTopOf="@+id/vote_average" />
+
+            <TextView
+                android:id="@+id/textView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="13dp"
+                android:text="@string/season"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtPopularityTitle" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/seasonList"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="8dp"
+                tools:listitem="@layout/season_item"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView" />
+
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>

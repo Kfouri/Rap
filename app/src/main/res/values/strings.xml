@@ -6,4 +6,14 @@
     <string name="searchUpcoming">Proximos Lanzamientos</string>
     <string name="searchTopRated">Top Ranking</string>
     <string name="searchPopular">Popular</string>
+    <string name="adult">Adulto:</string>
+    <string name="popularityVideoData">Popularity:</string>
+    <string name="adult_yes">Si</string>
+    <string name="adult_no">No</string>
+    <string name="homepage">Homepage:</string>
+    <string name="season_plural">temporadas</string>
+    <string name="season_singular">temporada</string>
+    <string name="episode_plural">episodios</string>
+    <string name="episodes_singular">episodio</string>
+    <string name="season">Temporadas</string>
 </resources>

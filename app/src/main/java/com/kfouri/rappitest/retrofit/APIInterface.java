@@ -2,6 +2,7 @@ package com.kfouri.rappitest.retrofit;
 
 import com.kfouri.rappitest.model.MovieDataResponse;
 import com.kfouri.rappitest.model.MovieResponse;
+import com.kfouri.rappitest.model.TvDataResponse;
 import com.kfouri.rappitest.model.TvResponse;
 
 import retrofit2.Call;
@@ -31,6 +32,9 @@ public interface APIInterface {
     @GET("4/discover/tv")
     Call<TvResponse> getUpcomingTvList(@Query("primary_release_date.gte") String primary_release_date);
 
-    @GET("3/movie/{movieId}?api_key=" + APIKEY + "language=es-ES")
-    Call<MovieDataResponse> getMovieData(@Path("movieId") String movieId);
+    @GET("3/movie/{movieId}?api_key=" + APIKEY + "&language=es-ES")
+    Call<MovieDataResponse> getMovieData(@Path("movieId") Integer movieId);
+
+    @GET("3/tv/{tvId}?api_key=" + APIKEY + "&language=es-ES")
+    Call<TvDataResponse> getTvData(@Path("tvId") Integer tvId);
 }

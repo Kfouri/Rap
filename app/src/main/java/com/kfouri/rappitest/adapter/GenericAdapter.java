@@ -8,10 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.kfouri.rappitest.R;
-import com.kfouri.rappitest.activity.VideoDataActivity;
+import com.kfouri.rappitest.activity.MovieDataActivity;
+import com.kfouri.rappitest.activity.TvDataActivity;
+import com.kfouri.rappitest.model.Movie;
 import com.kfouri.rappitest.model.Video;
 import com.squareup.picasso.Picasso;
 
@@ -52,9 +53,16 @@ public class GenericAdapter extends android.support.v7.widget.RecyclerView.Adapt
         viewHolder.imgPoster.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(mContext, VideoDataActivity.class);
+
+                Intent intent;
+
+                if (item instanceof Movie) {
+                    intent = new Intent(mContext, MovieDataActivity.class);
+                } else {
+                    intent = new Intent(mContext, TvDataActivity.class);
+                }
                 intent.putExtra("id", item.getId());
-                intent.putExtra("movie", true);
+                intent.putExtra("posterPath", item.getPoster_path());
                 mContext.startActivity(intent);
             }
         });
