@@ -48,9 +48,9 @@ public class MovieDataActivity extends AppCompatActivity {
 
         initView();
 
-        getData(id);
+        posterImageView.setTransitionName(String.valueOf(id));
         setPosterImage();
-        Toast.makeText(this, "ID: "+id, Toast.LENGTH_LONG).show();
+        getData(id);
     }
 
     private void initView() {

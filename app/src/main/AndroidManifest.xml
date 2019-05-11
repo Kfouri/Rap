@@ -11,12 +11,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activity.TvDataActivity"></activity>
-        <activity android:name=".activity.MovieDataActivity" />
-        <activity android:name=".activity.MainActivity">
+        <activity
+            android:name=".activity.TvDataActivity"
+            android:theme="@style/noAnimTheme"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.MovieDataActivity"
+            android:theme="@style/noAnimTheme"
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".activity.MainActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

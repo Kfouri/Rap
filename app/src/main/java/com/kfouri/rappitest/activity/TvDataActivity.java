@@ -65,9 +65,9 @@ public class TvDataActivity extends AppCompatActivity {
         mSeasonAdapter = new SeasonAdapter(this);
         mSeasonRecycler.setAdapter(mSeasonAdapter);
 
-        getData(id);
+        posterImageView.setTransitionName(String.valueOf(id));
         setPosterImage();
-        Toast.makeText(this, "ID: "+id, Toast.LENGTH_LONG).show();
+        getData(id);
     }
 
     private void initView() {

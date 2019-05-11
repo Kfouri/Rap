@@ -4,7 +4,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.EditText;
 
 import com.kfouri.rappitest.retrofit.APIClient;
 import com.kfouri.rappitest.retrofit.APIInterface;
@@ -35,6 +38,11 @@ public class MainActivity extends AppCompatActivity {
     private boolean mIsMovieTopRatedResponded;
     private boolean mIsTvUpcomingResponded;
     private boolean mIsMovieUpcomingResponded;
+    private EditText popularFilter;
+    private EditText topRatedFilter;
+    private EditText upcomingFilter;
+
+
 
     private GenericAdapter mPopularAdapter;
     private GenericAdapter mTopRatedAdapter;
@@ -54,6 +62,9 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView mPopularRecycler = findViewById(R.id.popularList);
         RecyclerView mTopRatedRecycler = findViewById(R.id.topRatedList);
         RecyclerView mUpcomingRecycler = findViewById(R.id.upcomingList);
+        popularFilter = findViewById(R.id.popularFilter);
+        topRatedFilter = findViewById(R.id.topRatedFilter);
+        upcomingFilter = findViewById(R.id.upcomingFilter);
 
         RecyclerView.LayoutManager mPopularLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
         RecyclerView.LayoutManager mTopRatedLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
@@ -67,6 +78,8 @@ public class MainActivity extends AppCompatActivity {
         mTopRatedAdapter = new GenericAdapter(this);
         mUpcomingAdapter = new GenericAdapter(this);
 
+        setFilter();
+
         mPopularRecycler.setAdapter(mPopularAdapter);
         mTopRatedRecycler.setAdapter(mTopRatedAdapter);
         mUpcomingRecycler.setAdapter(mUpcomingAdapter);
@@ -79,6 +92,50 @@ public class MainActivity extends AppCompatActivity {
 
         getMovieUpcomingList();
         getTvUpcomingList();
+
+
+    }
+
+    private void setFilter() {
+
+        popularFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                mPopularAdapter.getFilter().filter(charSequence.toString());
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        topRatedFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                mTopRatedAdapter.getFilter().filter(charSequence.toString());
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
+
+        upcomingFilter.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                mUpcomingAdapter.getFilter().filter(charSequence.toString());
+            }
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
     }
 
     private void getTvPopularList() {
