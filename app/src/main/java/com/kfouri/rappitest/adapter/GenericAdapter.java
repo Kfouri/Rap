@@ -3,6 +3,8 @@ package com.kfouri.rappitest.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.RecyclerView;
@@ -14,11 +16,12 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 
 import com.kfouri.rappitest.R;
-import com.kfouri.rappitest.activity.MovieDataActivity;
-import com.kfouri.rappitest.activity.TvDataActivity;
+import com.kfouri.rappitest.ui.MovieDataActivity;
+import com.kfouri.rappitest.ui.TvDataActivity;
 import com.kfouri.rappitest.model.Movie;
 import com.kfouri.rappitest.model.Tv;
 import com.kfouri.rappitest.model.Video;
+import com.kfouri.rappitest.util.Constants;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -28,7 +31,6 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
 
     private ArrayList<Video> mList = new ArrayList<>();
     private ArrayList<Video> mItemsFiltered = new ArrayList<>();;
-    private static final String IMAGES_URL = "http://image.tmdb.org/t/p/w500";
     private Context mContext;
 
     public GenericAdapter(Context context) {
@@ -52,7 +54,7 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
         viewHolder.imgPoster.setImageBitmap(null);
 
         Picasso.with(mContext.getApplicationContext())
-                .load(IMAGES_URL + item.getPoster_path())
+                .load(Constants.IMAGES_URL + item.getPoster_path())
                 .into(viewHolder.imgPoster);
 
         viewHolder.itemView.setTag(item);

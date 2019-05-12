@@ -1,6 +1,5 @@
-package com.kfouri.rappitest.activity;
+package com.kfouri.rappitest.ui;
 
-import android.annotation.SuppressLint;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -8,15 +7,13 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kfouri.rappitest.R;
-import com.kfouri.rappitest.adapter.GenericAdapter;
 import com.kfouri.rappitest.adapter.SeasonAdapter;
-import com.kfouri.rappitest.model.MovieDataResponse;
 import com.kfouri.rappitest.model.TvDataResponse;
 import com.kfouri.rappitest.retrofit.APIClient;
 import com.kfouri.rappitest.retrofit.APIInterface;
+import com.kfouri.rappitest.util.Constants;
 import com.squareup.picasso.Picasso;
 
 import retrofit2.Call;
@@ -25,8 +22,6 @@ import retrofit2.Response;
 
 public class TvDataActivity extends AppCompatActivity {
 
-    //TODO Llevar IMAGES_URL a un lugar mas generico
-    private static final String IMAGES_URL = "http://image.tmdb.org/t/p/w500";
     private static final String TAG = "TvDataActivity";
 
     private ImageView posterImageView;
@@ -92,7 +87,7 @@ public class TvDataActivity extends AppCompatActivity {
         posterImageView.setImageBitmap(null);
 
         Picasso.with(getApplicationContext())
-                .load(IMAGES_URL + mPosterPath)
+                .load(Constants.IMAGES_URL + mPosterPath)
                 .into(posterImageView);
     }
 

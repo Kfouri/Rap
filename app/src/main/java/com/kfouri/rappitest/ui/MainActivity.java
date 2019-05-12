@@ -1,26 +1,29 @@
-package com.kfouri.rappitest.activity;
+package com.kfouri.rappitest.ui;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import com.kfouri.rappitest.retrofit.APIClient;
-import com.kfouri.rappitest.retrofit.APIInterface;
 import com.kfouri.rappitest.R;
 import com.kfouri.rappitest.adapter.GenericAdapter;
 import com.kfouri.rappitest.model.MovieResponse;
 import com.kfouri.rappitest.model.TvResponse;
 import com.kfouri.rappitest.model.Video;
+import com.kfouri.rappitest.retrofit.APIClient;
+import com.kfouri.rappitest.retrofit.APIInterface;
+import com.kfouri.rappitest.util.Utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -41,9 +44,6 @@ public class MainActivity extends AppCompatActivity {
     private EditText popularFilter;
     private EditText topRatedFilter;
     private EditText upcomingFilter;
-
-
-
     private GenericAdapter mPopularAdapter;
     private GenericAdapter mTopRatedAdapter;
     private GenericAdapter mUpcomingAdapter;
@@ -84,14 +84,21 @@ public class MainActivity extends AppCompatActivity {
         mTopRatedRecycler.setAdapter(mTopRatedAdapter);
         mUpcomingRecycler.setAdapter(mUpcomingAdapter);
 
-        getTvPopularList();
-        getMoviePopularList();
+        if (Utils.isNetworkAvailable(this)) {
 
-        getTvTopRatedeList();
-        getMovieTopRatedList();
+            getTvPopularList();
+            getMoviePopularList();
 
-        getMovieUpcomingList();
-        getTvUpcomingList();
+            getTvTopRatedeList();
+            getMovieTopRatedList();
+
+            getMovieUpcomingList();
+            getTvUpcomingList();
+
+        } else {
+            Toast.makeText(this, "Looking for information cached", Toast.LENGTH_LONG).show();
+            //TODO leer de BBDD y transformar a cada lista
+        }
 
 
     }
@@ -227,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getMovieUpcomingList() {
+        //TODO getToday
         Call<MovieResponse> call = apiInterface.getUpcomingMovieList("2019-05-09");
 
         call.enqueue(new Callback<MovieResponse>() {
@@ -251,6 +259,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getTvUpcomingList() {
+        //TODO get today
         Call<TvResponse> call = apiInterface.getUpcomingTvList("2019-05-09");
 
         call.enqueue(new Callback<TvResponse>() {
@@ -277,6 +286,8 @@ public class MainActivity extends AppCompatActivity {
     private void collectUpcomingData() {
         if (mIsMovieUpcomingResponded && mIsTvUpcomingResponded) {
             mUpcomingAdapter.setData(mVideoUpcomingList);
+            Log.d(TAG, "collectUpcomingData");
+            // Eliminar y Guardar Datos en BBDD
         }
     }
 
@@ -289,6 +300,8 @@ public class MainActivity extends AppCompatActivity {
             });
 
             mPopularAdapter.setData(mVideoPopularList);
+            Log.d(TAG, "reorderPopularList");
+            // Eliminar y Guardar Datos en BBDD
         }
     }
 
@@ -301,6 +314,9 @@ public class MainActivity extends AppCompatActivity {
             });
 
             mTopRatedAdapter.setData(mVideoTopRatedList);
+            Log.d(TAG, "reorderTopRatedList path "+this.getFilesDir().getPath());
+            // Eliminar y Guardar Datos en BBDD
+
         }
     }
 

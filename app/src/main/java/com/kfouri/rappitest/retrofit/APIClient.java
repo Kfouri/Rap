@@ -1,5 +1,7 @@
 package com.kfouri.rappitest.retrofit;
 
+import com.kfouri.rappitest.util.Constants;
+
 import java.io.IOException;
 
 import okhttp3.Interceptor;
@@ -12,8 +14,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class APIClient {
 
     private static Retrofit retrofit;
-    private static final String BASE_URL = "https://api.themoviedb.org/";
-    private static String mToken = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI4MGJkZDlkMDhlM2UzNzA4YjEzMGE0YTY0YjQ3NTVjOSIsInN1YiI6IjVjZDJlOWIwMGUwYTI2NzRhZGZlYTc1OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ewwpYLCThF8W16TAv6WgOcQgMldut-kZBBkKzjF3T68";
 
     public static Retrofit getClient() {
         if (retrofit == null) {
@@ -22,7 +22,7 @@ public class APIClient {
                 @Override
                 public Response intercept(Chain chain) throws IOException {
                     Request newRequest  = chain.request().newBuilder()
-                            .addHeader("Authorization", "Bearer " + mToken)
+                            .addHeader("Authorization", "Bearer " + Constants.TOKEN)
                             .build();
                     return chain.proceed(newRequest);
                 }
@@ -30,7 +30,7 @@ public class APIClient {
 
             retrofit = new retrofit2.Retrofit.Builder()
                     .client(client)
-                    .baseUrl(BASE_URL)
+                    .baseUrl(Constants.BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

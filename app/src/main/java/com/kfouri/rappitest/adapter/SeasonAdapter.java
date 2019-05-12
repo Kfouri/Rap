@@ -3,7 +3,6 @@ package com.kfouri.rappitest.adapter;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.TextView;
 
 import com.kfouri.rappitest.R;
 import com.kfouri.rappitest.model.Season;
+import com.kfouri.rappitest.util.Constants;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -19,7 +19,6 @@ import java.util.ArrayList;
 public class SeasonAdapter extends android.support.v7.widget.RecyclerView.Adapter<SeasonAdapter.ViewHolder> {
 
     private ArrayList<Season> mList = new ArrayList<>();
-    private static final String IMAGES_URL = "http://image.tmdb.org/t/p/w500";
     private Context mContext;
 
     public SeasonAdapter(Context context) {
@@ -43,7 +42,7 @@ public class SeasonAdapter extends android.support.v7.widget.RecyclerView.Adapte
         viewHolder.imgPosterSeason.setImageBitmap(null);
 
         Picasso.with(mContext)
-                .load(IMAGES_URL + item.getPoster_path())
+                .load(Constants.IMAGES_URL + item.getPoster_path())
                 .into(viewHolder.imgPosterSeason);
 
         viewHolder.txtName.setText(item.getName());

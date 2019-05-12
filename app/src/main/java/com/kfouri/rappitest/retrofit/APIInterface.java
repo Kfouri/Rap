@@ -4,6 +4,7 @@ import com.kfouri.rappitest.model.MovieDataResponse;
 import com.kfouri.rappitest.model.MovieResponse;
 import com.kfouri.rappitest.model.TvDataResponse;
 import com.kfouri.rappitest.model.TvResponse;
+import com.kfouri.rappitest.util.Constants;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
@@ -11,8 +12,6 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface APIInterface {
-
-    String APIKEY = "80bdd9d08e3e3708b130a4a64b4755c9";
 
     @GET("4/discover/movie?sort_by=popularity.desc")
     Call<MovieResponse> getPopularMovieList();
@@ -32,9 +31,9 @@ public interface APIInterface {
     @GET("4/discover/tv")
     Call<TvResponse> getUpcomingTvList(@Query("primary_release_date.gte") String primary_release_date);
 
-    @GET("3/movie/{movieId}?api_key=" + APIKEY + "&language=es-ES")
+    @GET("3/movie/{movieId}?api_key=" + Constants.APIKEY + "&language=es-ES")
     Call<MovieDataResponse> getMovieData(@Path("movieId") Integer movieId);
 
-    @GET("3/tv/{tvId}?api_key=" + APIKEY + "&language=es-ES")
+    @GET("3/tv/{tvId}?api_key=" + Constants.APIKEY + "&language=es-ES")
     Call<TvDataResponse> getTvData(@Path("tvId") Integer tvId);
 }

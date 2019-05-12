@@ -16,4 +16,6 @@
     <string name="episode_plural">episodios</string>
     <string name="episodes_singular">episodio</string>
     <string name="season">Temporadas</string>
+    <string name="information_cached">Looking for information cached</string>
+
 </resources>
