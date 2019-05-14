@@ -22,7 +22,7 @@ import retrofit2.Response;
 
 public class TvDataActivity extends AppCompatActivity {
 
-    private static final String TAG = "TvDataActivity";
+    private final String TAG = this.getClass().getSimpleName();
 
     private ImageView posterImageView;
     private TextView descriptionTextView;

@@ -1,6 +1,16 @@
 package com.kfouri.rappitest.ui;
 
+import android.Manifest;
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,18 +22,28 @@ import android.widget.Toast;
 
 import com.kfouri.rappitest.R;
 import com.kfouri.rappitest.adapter.GenericAdapter;
+import com.kfouri.rappitest.model.Movie;
 import com.kfouri.rappitest.model.MovieResponse;
+import com.kfouri.rappitest.model.Tv;
 import com.kfouri.rappitest.model.TvResponse;
 import com.kfouri.rappitest.model.Video;
+import com.kfouri.rappitest.persist.model.PopularModel;
 import com.kfouri.rappitest.retrofit.APIClient;
 import com.kfouri.rappitest.retrofit.APIInterface;
+import com.kfouri.rappitest.util.Constants;
 import com.kfouri.rappitest.util.Utils;
-
+import com.kfouri.rappitest.viewmodel.PopularViewModel;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
-import okhttp3.internal.Util;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,9 +52,9 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private APIInterface apiInterface;
-    private ArrayList mVideoPopularList;
-    private ArrayList mVideoTopRatedList;
-    private ArrayList mVideoUpcomingList;
+    private ArrayList<Video> mVideoPopularList;
+    private ArrayList<Video> mVideoTopRatedList;
+    private ArrayList<Video> mVideoUpcomingList;
     private boolean mIsTvPopularResponded;
     private boolean mIsMoviePopularResponded;
     private boolean mIsTvTopRatedResponded;
@@ -47,7 +67,10 @@ public class MainActivity extends AppCompatActivity {
     private GenericAdapter mPopularAdapter;
     private GenericAdapter mTopRatedAdapter;
     private GenericAdapter mUpcomingAdapter;
+    private PopularViewModel popularViewModel;
+    private boolean mWriteExternalStorageGranted;
 
+    private static final int REQUEST_CODE = 1;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
         mVideoUpcomingList = new ArrayList();
 
         apiInterface = APIClient.getClient().create(APIInterface.class);
+
+        popularViewModel = ViewModelProviders.of(this).get(PopularViewModel.class);
 
         RecyclerView mPopularRecycler = findViewById(R.id.popularList);
         RecyclerView mTopRatedRecycler = findViewById(R.id.topRatedList);
@@ -84,23 +109,8 @@ public class MainActivity extends AppCompatActivity {
         mTopRatedRecycler.setAdapter(mTopRatedAdapter);
         mUpcomingRecycler.setAdapter(mUpcomingAdapter);
 
-        if (Utils.isNetworkAvailable(this)) {
-
-            getTvPopularList();
-            getMoviePopularList();
-
-            getTvTopRatedeList();
-            getMovieTopRatedList();
-
-            getMovieUpcomingList();
-            getTvUpcomingList();
-
-        } else {
-            Toast.makeText(this, "Looking for information cached", Toast.LENGTH_LONG).show();
-            //TODO leer de BBDD y transformar a cada lista
-        }
-
-
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_CODE);
     }
 
     private void setFilter() {
@@ -301,7 +311,34 @@ public class MainActivity extends AppCompatActivity {
 
             mPopularAdapter.setData(mVideoPopularList);
             Log.d(TAG, "reorderPopularList");
-            // Eliminar y Guardar Datos en BBDD
+
+            if (mWriteExternalStorageGranted && Utils.isNetworkAvailable(this)) {
+
+                popularViewModel.removeAllData();
+
+                int order = 0;
+                for (Video video : mVideoPopularList) {
+                    order++;
+                    PopularModel popularModel = new PopularModel();
+
+                    popularModel.setId(video.getId());
+                    popularModel.setName((video instanceof Movie) ? ((Movie)video).getTitle() : ((Tv) video).getName());
+                    popularModel.setPoster_path(video.getPoster_path());
+                    popularModel.setPopular_order(order);
+                    popularModel.setMovie((video instanceof Movie));
+                    popularViewModel.insertPopular(popularModel);
+
+                    File file = new File(Constants.PATH + "/" + Constants.FOLDER_NAME + video.getPoster_path());
+                    if (!file.exists()) {
+                        Log.d(TAG, "Downloading " + video.getPoster_path());
+                        new DownloadImageAsnyc(video.getPoster_path()).execute(Constants.IMAGES_URL);
+                    } else {
+                        Log.d(TAG, "File " + video.getPoster_path() + " exist");
+                    }
+                }
+
+            }
+
         }
     }
 
@@ -314,10 +351,167 @@ public class MainActivity extends AppCompatActivity {
             });
 
             mTopRatedAdapter.setData(mVideoTopRatedList);
-            Log.d(TAG, "reorderTopRatedList path "+this.getFilesDir().getPath());
+            //Log.d(TAG, "reorderTopRatedList path "+this.getFilesDir().getPath());
             // Eliminar y Guardar Datos en BBDD
 
         }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CODE) {
+            for (int i = 0; i < permissions.length; i++) {
+                String permission = permissions[i];
+                int grantResult = grantResults[i];
+
+                if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                        mWriteExternalStorageGranted = true;
+                        if (Utils.isNetworkAvailable(this)) {
+                            deleteRecursive(new File(Constants.PATH, Constants.FOLDER_NAME));
+                            createFolder();
+                        }
+                    } else {
+                        mWriteExternalStorageGranted = false;
+                        Toast.makeText(this, "Offline disabled", Toast.LENGTH_LONG).show();
+                    }
+
+                    if (Utils.isNetworkAvailable(this)) {
+
+                        getTvPopularList();
+                        getMoviePopularList();
+
+                        getTvTopRatedeList();
+                        getMovieTopRatedList();
+
+                        getMovieUpcomingList();
+                        getTvUpcomingList();
+
+                    } else {
+                        if (mWriteExternalStorageGranted) {
+                            Toast.makeText(this, "Offline mode", Toast.LENGTH_LONG).show();
+                            //TODO leer de BBDD y transformar a cada lista
+                            popularViewModel.getPopularData().observe(this, new Observer<List<PopularModel>>() {
+                                @Override
+                                public void onChanged(@Nullable List<PopularModel> popularModels) {
+                                    Video video;
+                                    for (PopularModel popularModel : popularModels) {
+                                        Log.d(TAG, popularModel.getName());
+
+                                        if (popularModel.getMovie()) {
+                                            Movie movie = new Movie();
+
+                                            movie.setId(popularModel.getId());
+                                            movie.setTitle(popularModel.getName());
+                                            movie.setPoster_path(popularModel.getPoster_path());
+                                            mVideoPopularList.add(movie);
+                                        } else {
+                                            Tv tv = new Tv();
+
+                                            tv.setId(popularModel.getId());
+                                            tv.setName(popularModel.getName());
+                                            tv.setPoster_path(popularModel.getPoster_path());
+                                            mVideoPopularList.add(tv);
+                                        }
+                                    }
+                                    mPopularAdapter.setData(mVideoPopularList);
+                                }
+                            });
+                        } else {
+                            Toast.makeText(this, "Offline mode without permission", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    void deleteRecursive(File fileOrDirectory) {
+        Log.d(TAG, "Deleting Folder");
+        if (fileOrDirectory.isDirectory()) {
+            for (File child : fileOrDirectory.listFiles()) {
+                deleteRecursive(child);
+            }
+        }
+
+        fileOrDirectory.delete();
+    }
+
+    private void createFolder() {
+        Log.d(TAG, "Creating Folder");
+        File f = new File(Constants.PATH, Constants.FOLDER_NAME);
+        if (!f.exists()) {
+            if (f.mkdirs()) {
+                Log.d(TAG, "Folder " + Constants.PATH + "/" + Constants.FOLDER_NAME + " created");
+            }
+        }
+    }
+
+    public static Boolean saveBitmapToJPEGFile(Bitmap theTempBitmap, File theTargetFile) {
+        boolean result = true;
+        if (theTempBitmap != null) {
+            FileOutputStream out = null;
+            try {
+                out = new FileOutputStream(theTargetFile);
+                theTempBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            } catch (FileNotFoundException e) {
+                result = false;
+                e.printStackTrace();
+            }
+            if (out != null) {
+                try {
+                    out.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            result = false;
+        }
+        return result;
+    }
+
+    public static class DownloadImageAsnyc extends AsyncTask<String, Void, Bitmap> {
+
+        String downloadPath = "";
+        String mFileName;
+
+        DownloadImageAsnyc(String fileName) {
+            mFileName = fileName;
+        }
+
+        @Override
+        protected Bitmap doInBackground(String... args) {
+            try {
+                downloadPath = args[0];
+                return BitmapFactory.decodeStream((InputStream) new URL(downloadPath + mFileName).getContent());
+
+            } catch (IOException e) {
+                Log.d(TAG, "Error downloading " + downloadPath + mFileName);
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            if (bitmap != null) {
+                File file = new File(Constants.PATH + "/" + Constants.FOLDER_NAME + "/" + mFileName);
+
+                if (saveBitmapToJPEGFile(bitmap, file)) {
+                    Log.d(TAG, "File " + file.getName() + " Saved");
+                } else {
+                    Log.d(TAG, "File " + file.getName() + " NOT Saved");
+                }
+//
+//                if (mFileName.equals("mo0FP1GxOFZT4UDde7RFDz5APXF.jpg")) {
+//                    mImage.setImageDrawable(getBitmap(PATH + "/" + FOLDER_NAME + "/" + "mo0FP1GxOFZT4UDde7RFDz5APXF.jpg"));
+//                }
+            }
+        }
+    }
 }
+

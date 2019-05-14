@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 public class SeasonAdapter extends android.support.v7.widget.RecyclerView.Adapter<SeasonAdapter.ViewHolder> {
 
+    private final String TAG = this.getClass().getSimpleName();
     private ArrayList<Season> mList = new ArrayList<>();
     private Context mContext;
 

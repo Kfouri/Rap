@@ -20,7 +20,7 @@ import retrofit2.Response;
 
 public class MovieDataActivity extends AppCompatActivity {
 
-    private static final String TAG = "MovieDataActivity";
+    private final String TAG = this.getClass().getSimpleName();
 
     private ImageView posterImageView;
     private TextView descriptionTextView;
