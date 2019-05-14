@@ -18,6 +18,15 @@ public class TvDataResponse {
     private Float vote_average;
     private Integer vote_count;
     private ArrayList<Season> seasons;
+    private VideoPlay videos;
+
+    public VideoPlay getVideos() {
+        return videos;
+    }
+
+    public void setVideos(VideoPlay videos) {
+        this.videos = videos;
+    }
 
     public String getFirst_air_date() {
         return first_air_date;
