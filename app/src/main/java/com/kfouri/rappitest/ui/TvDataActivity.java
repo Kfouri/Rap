@@ -1,10 +1,12 @@
 package com.kfouri.rappitest.ui;
 
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -14,6 +16,7 @@ import com.kfouri.rappitest.model.TvDataResponse;
 import com.kfouri.rappitest.retrofit.APIClient;
 import com.kfouri.rappitest.retrofit.APIInterface;
 import com.kfouri.rappitest.util.Constants;
+import com.kfouri.rappitest.util.Utils;
 import com.squareup.picasso.Picasso;
 
 import retrofit2.Call;
@@ -35,6 +38,8 @@ public class TvDataActivity extends AppCompatActivity {
     private TextView homepageTextView;
     private TextView popularityTextView;
     private TextView voteAverageTextView;
+    private TextView connectionErrorTextView;
+    private ConstraintLayout generalConstraintLayout;
 
     private RecyclerView mSeasonRecycler;
     private SeasonAdapter mSeasonAdapter;
@@ -63,20 +68,27 @@ public class TvDataActivity extends AppCompatActivity {
         posterImageView.setTransitionName(String.valueOf(id));
         setPosterImage();
         getData(id);
+
+        if (!Utils.isNetworkAvailable(this)) {
+            connectionErrorTextView.setVisibility(View.VISIBLE);
+            generalConstraintLayout.setVisibility(View.GONE);
+        }
     }
 
     private void initView() {
-        posterImageView = (ImageView) findViewById(R.id.image_poster);
-        descriptionTextView = (TextView) findViewById(R.id.txtDescription);
-        titleTextView = (TextView) findViewById(R.id.txtTitle);
-        firstAirDateTextView = (TextView) findViewById(R.id.txtFirstAirDate);
-        numberSeasonTitleTextView = (TextView) findViewById(R.id.txtNumberSeasonTitle);
-        numberSeasonTextView = (TextView) findViewById(R.id.txtNumberSeason);
-        numberEpisodesTitleTextView = (TextView) findViewById(R.id.txtNumberEpisodesTitle);
-        numberEpisodesTextView = (TextView) findViewById(R.id.txtNumberEpisodes);
-        homepageTextView = (TextView) findViewById(R.id.txtHomepage);
-        popularityTextView = (TextView) findViewById(R.id.txtPopularity);
-        voteAverageTextView = (TextView) findViewById(R.id.vote_average);
+        posterImageView = findViewById(R.id.image_poster);
+        descriptionTextView = findViewById(R.id.txtDescription);
+        titleTextView = findViewById(R.id.txtTitle);
+        firstAirDateTextView = findViewById(R.id.txtFirstAirDate);
+        numberSeasonTitleTextView = findViewById(R.id.txtNumberSeasonTitle);
+        numberSeasonTextView = findViewById(R.id.txtNumberSeason);
+        numberEpisodesTitleTextView = findViewById(R.id.txtNumberEpisodesTitle);
+        numberEpisodesTextView = findViewById(R.id.txtNumberEpisodes);
+        homepageTextView = findViewById(R.id.txtHomepage);
+        popularityTextView = findViewById(R.id.txtPopularity);
+        voteAverageTextView = findViewById(R.id.vote_average);
+        connectionErrorTextView = findViewById(R.id.connectionError);
+        generalConstraintLayout = findViewById(R.id.generalConstraintLayout);
 
         mSeasonRecycler = findViewById(R.id.seasonList);
         mSeasonRecycler.setLayoutManager(new LinearLayoutManager(this));

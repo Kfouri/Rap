@@ -1,8 +1,10 @@
 package com.kfouri.rappitest.ui;
 
+import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -12,6 +14,7 @@ import com.kfouri.rappitest.model.MovieDataResponse;
 import com.kfouri.rappitest.retrofit.APIClient;
 import com.kfouri.rappitest.retrofit.APIInterface;
 import com.kfouri.rappitest.util.Constants;
+import com.kfouri.rappitest.util.Utils;
 import com.squareup.picasso.Picasso;
 
 import retrofit2.Call;
@@ -28,6 +31,8 @@ public class MovieDataActivity extends AppCompatActivity {
     private TextView releaseDateTextView;
     private TextView adultTextView;
     private TextView popularityTextView;
+    private TextView connectionErrorTextView;
+    private ConstraintLayout generalConstraintLayout;
 
     private APIInterface apiInterface;
 
@@ -50,15 +55,22 @@ public class MovieDataActivity extends AppCompatActivity {
         posterImageView.setTransitionName(String.valueOf(id));
         setPosterImage();
         getData(id);
+
+        if (!Utils.isNetworkAvailable(this)) {
+            connectionErrorTextView.setVisibility(View.VISIBLE);
+            generalConstraintLayout.setVisibility(View.GONE);
+        }
     }
 
     private void initView() {
-        posterImageView = (ImageView) findViewById(R.id.image_poster);
-        descriptionTextView = (TextView) findViewById(R.id.txtDescription);
-        titleTextView = (TextView) findViewById(R.id.txtTitle);
-        releaseDateTextView = (TextView) findViewById(R.id.txtReleaseDate);
-        adultTextView = (TextView) findViewById(R.id.txtAdult);
-        popularityTextView = (TextView) findViewById(R.id.txtPopularity);
+        posterImageView = findViewById(R.id.image_poster);
+        descriptionTextView = findViewById(R.id.txtDescription);
+        titleTextView = findViewById(R.id.txtTitle);
+        releaseDateTextView = findViewById(R.id.txtReleaseDate);
+        adultTextView = findViewById(R.id.txtAdult);
+        popularityTextView = findViewById(R.id.txtPopularity);
+        connectionErrorTextView = findViewById(R.id.connectionError);
+        generalConstraintLayout = findViewById(R.id.generalConstraintLayout);
     }
 
     private void setPosterImage() {
