@@ -25,10 +25,10 @@ public interface APIInterface {
     @GET("4/discover/tv?sort_by=vote_average.desc")
     Call<TvResponse> getTopRatedTvList();
 
-    @GET("4/discover/movie")
+    @GET("4/discover/movie?sort_by=primary_release_date")
     Call<MovieResponse> getUpcomingMovieList(@Query("primary_release_date.gte") String primary_release_date);
 
-    @GET("4/discover/tv")
+    @GET("4/discover/tv?sort_by=primary_release_date")
     Call<TvResponse> getUpcomingTvList(@Query("primary_release_date.gte") String primary_release_date);
 
     @GET("3/movie/{movieId}?api_key=" + Constants.APIKEY + "&language=es-ES")

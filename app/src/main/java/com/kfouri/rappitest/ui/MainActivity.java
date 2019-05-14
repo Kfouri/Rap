@@ -27,22 +27,31 @@ import com.kfouri.rappitest.model.MovieResponse;
 import com.kfouri.rappitest.model.Tv;
 import com.kfouri.rappitest.model.TvResponse;
 import com.kfouri.rappitest.model.Video;
+import com.kfouri.rappitest.persist.dao.TopRatedDao;
 import com.kfouri.rappitest.persist.model.PopularModel;
+import com.kfouri.rappitest.persist.model.TopRatedModel;
 import com.kfouri.rappitest.retrofit.APIClient;
 import com.kfouri.rappitest.retrofit.APIInterface;
 import com.kfouri.rappitest.util.Constants;
 import com.kfouri.rappitest.util.Utils;
 import com.kfouri.rappitest.viewmodel.PopularViewModel;
+import com.kfouri.rappitest.viewmodel.TopRatedViewModel;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -68,7 +77,13 @@ public class MainActivity extends AppCompatActivity {
     private GenericAdapter mTopRatedAdapter;
     private GenericAdapter mUpcomingAdapter;
     private PopularViewModel popularViewModel;
+    private TopRatedViewModel topRatedViewModel;
+
     private boolean mWriteExternalStorageGranted;
+
+    private RecyclerView mPopularRecycler;
+    private RecyclerView mTopRatedRecycler;
+    private RecyclerView mUpcomingRecycler;
 
     private static final int REQUEST_CODE = 1;
     @Override
@@ -83,21 +98,10 @@ public class MainActivity extends AppCompatActivity {
         apiInterface = APIClient.getClient().create(APIInterface.class);
 
         popularViewModel = ViewModelProviders.of(this).get(PopularViewModel.class);
+        topRatedViewModel = ViewModelProviders.of(this).get(TopRatedViewModel.class);
 
-        RecyclerView mPopularRecycler = findViewById(R.id.popularList);
-        RecyclerView mTopRatedRecycler = findViewById(R.id.topRatedList);
-        RecyclerView mUpcomingRecycler = findViewById(R.id.upcomingList);
-        popularFilter = findViewById(R.id.popularFilter);
-        topRatedFilter = findViewById(R.id.topRatedFilter);
-        upcomingFilter = findViewById(R.id.upcomingFilter);
-
-        RecyclerView.LayoutManager mPopularLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        RecyclerView.LayoutManager mTopRatedLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-        RecyclerView.LayoutManager mUpcomingLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
-
-        mPopularRecycler.setLayoutManager(mPopularLayoutManager);
-        mTopRatedRecycler.setLayoutManager(mTopRatedLayoutManager);
-        mUpcomingRecycler.setLayoutManager(mUpcomingLayoutManager);
+        initView();
+        createLayoutManager();
 
         mPopularAdapter = new GenericAdapter(this);
         mTopRatedAdapter = new GenericAdapter(this);
@@ -111,6 +115,26 @@ public class MainActivity extends AppCompatActivity {
 
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_CODE);
+    }
+
+    private void initView() {
+        mPopularRecycler = findViewById(R.id.popularList);
+        mTopRatedRecycler = findViewById(R.id.topRatedList);
+        mUpcomingRecycler = findViewById(R.id.upcomingList);
+        popularFilter = findViewById(R.id.popularFilter);
+        topRatedFilter = findViewById(R.id.topRatedFilter);
+        upcomingFilter = findViewById(R.id.upcomingFilter);
+
+    }
+
+    private void createLayoutManager() {
+        RecyclerView.LayoutManager mPopularLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView.LayoutManager mTopRatedLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+        RecyclerView.LayoutManager mUpcomingLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false);
+
+        mPopularRecycler.setLayoutManager(mPopularLayoutManager);
+        mTopRatedRecycler.setLayoutManager(mTopRatedLayoutManager);
+        mUpcomingRecycler.setLayoutManager(mUpcomingLayoutManager);
     }
 
     private void setFilter() {
@@ -244,8 +268,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getMovieUpcomingList() {
-        //TODO getToday
-        Call<MovieResponse> call = apiInterface.getUpcomingMovieList("2019-05-09");
+        Date currentTime = Calendar.getInstance().getTime();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        String today = df.format(currentTime.getTime());
+
+        Call<MovieResponse> call = apiInterface.getUpcomingMovieList(today);
 
         call.enqueue(new Callback<MovieResponse>() {
             @Override
@@ -269,8 +296,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getTvUpcomingList() {
-        //TODO get today
-        Call<TvResponse> call = apiInterface.getUpcomingTvList("2019-05-09");
+        Date currentTime = Calendar.getInstance().getTime();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        String today = df.format(currentTime.getTime());
+
+        Call<TvResponse> call = apiInterface.getUpcomingTvList(today);
 
         call.enqueue(new Callback<TvResponse>() {
             @Override
@@ -283,7 +313,6 @@ public class MainActivity extends AppCompatActivity {
                     mIsTvUpcomingResponded = true;
                     collectUpcomingData();
                 }
-
             }
 
             @Override
@@ -318,22 +347,24 @@ public class MainActivity extends AppCompatActivity {
 
                 int order = 0;
                 for (Video video : mVideoPopularList) {
-                    order++;
-                    PopularModel popularModel = new PopularModel();
+                    if (video.getPoster_path() != null) {
+                        order++;
+                        PopularModel popularModel = new PopularModel();
 
-                    popularModel.setId(video.getId());
-                    popularModel.setName((video instanceof Movie) ? ((Movie)video).getTitle() : ((Tv) video).getName());
-                    popularModel.setPoster_path(video.getPoster_path());
-                    popularModel.setPopular_order(order);
-                    popularModel.setMovie((video instanceof Movie));
-                    popularViewModel.insertPopular(popularModel);
+                        popularModel.setId(video.getId());
+                        popularModel.setName((video instanceof Movie) ? ((Movie) video).getTitle() : ((Tv) video).getName());
+                        popularModel.setPoster_path(video.getPoster_path());
+                        popularModel.setPopular_order(order);
+                        popularModel.setMovie((video instanceof Movie));
+                        popularViewModel.insertPopular(popularModel);
 
-                    File file = new File(Constants.PATH + "/" + Constants.FOLDER_NAME + video.getPoster_path());
-                    if (!file.exists()) {
-                        Log.d(TAG, "Downloading " + video.getPoster_path());
-                        new DownloadImageAsnyc(video.getPoster_path()).execute(Constants.IMAGES_URL);
-                    } else {
-                        Log.d(TAG, "File " + video.getPoster_path() + " exist");
+                        File file = new File(Constants.PATH + "/" + Constants.FOLDER_NAME + video.getPoster_path());
+                        if (!file.exists()) {
+                            Log.d(TAG, "Downloading " + video.getPoster_path());
+                            new DownloadImageAsnyc(video.getPoster_path()).execute(Constants.IMAGES_URL);
+                        } else {
+                            Log.d(TAG, "File " + video.getPoster_path() + " exist");
+                        }
                     }
                 }
 
@@ -351,9 +382,33 @@ public class MainActivity extends AppCompatActivity {
             });
 
             mTopRatedAdapter.setData(mVideoTopRatedList);
-            //Log.d(TAG, "reorderTopRatedList path "+this.getFilesDir().getPath());
-            // Eliminar y Guardar Datos en BBDD
 
+            if (mWriteExternalStorageGranted && Utils.isNetworkAvailable(this)) {
+                topRatedViewModel.removeAllData();
+
+                int order = 0;
+                for (Video video : mVideoTopRatedList) {
+                    if (video.getPoster_path() != null) {
+                        order++;
+                        TopRatedModel topRatedModel = new TopRatedModel();
+
+                        topRatedModel.setId(video.getId());
+                        topRatedModel.setName((video instanceof Movie) ? ((Movie)video).getTitle() : ((Tv) video).getName());
+                        topRatedModel.setPoster_path(video.getPoster_path());
+                        topRatedModel.setToprated_order(order);
+                        topRatedModel.setMovie((video instanceof Movie));
+                        topRatedViewModel.insertTopRated(topRatedModel);
+
+                        File file = new File(Constants.PATH + "/" + Constants.FOLDER_NAME + video.getPoster_path());
+                        if (!file.exists()) {
+                            Log.d(TAG, "Downloading " + video.getPoster_path());
+                            new DownloadImageAsnyc(video.getPoster_path()).execute(Constants.IMAGES_URL);
+                        } else {
+                            Log.d(TAG, "File " + video.getPoster_path() + " exist");
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -370,8 +425,8 @@ public class MainActivity extends AppCompatActivity {
                     if (grantResult == PackageManager.PERMISSION_GRANTED) {
                         mWriteExternalStorageGranted = true;
                         if (Utils.isNetworkAvailable(this)) {
-                            deleteRecursive(new File(Constants.PATH, Constants.FOLDER_NAME));
-                            createFolder();
+                            Utils.deleteRecursive(new File(Constants.PATH, Constants.FOLDER_NAME));
+                            Utils.createFolder();
                         }
                     } else {
                         mWriteExternalStorageGranted = false;
@@ -392,86 +447,68 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         if (mWriteExternalStorageGranted) {
                             Toast.makeText(this, "Offline mode", Toast.LENGTH_LONG).show();
-                            //TODO leer de BBDD y transformar a cada lista
                             popularViewModel.getPopularData().observe(this, new Observer<List<PopularModel>>() {
                                 @Override
                                 public void onChanged(@Nullable List<PopularModel> popularModels) {
-                                    Video video;
-                                    for (PopularModel popularModel : popularModels) {
-                                        Log.d(TAG, popularModel.getName());
+                                    if (popularModels != null) {
+                                        for (PopularModel popularModel : popularModels) {
+                                            Log.d(TAG, popularModel.getName());
 
-                                        if (popularModel.getMovie()) {
-                                            Movie movie = new Movie();
+                                            if (popularModel.getMovie()) {
+                                                Movie movie = new Movie();
 
-                                            movie.setId(popularModel.getId());
-                                            movie.setTitle(popularModel.getName());
-                                            movie.setPoster_path(popularModel.getPoster_path());
-                                            mVideoPopularList.add(movie);
-                                        } else {
-                                            Tv tv = new Tv();
+                                                movie.setId(popularModel.getId());
+                                                movie.setTitle(popularModel.getName());
+                                                movie.setPoster_path(popularModel.getPoster_path());
+                                                mVideoPopularList.add(movie);
+                                            } else {
+                                                Tv tv = new Tv();
 
-                                            tv.setId(popularModel.getId());
-                                            tv.setName(popularModel.getName());
-                                            tv.setPoster_path(popularModel.getPoster_path());
-                                            mVideoPopularList.add(tv);
+                                                tv.setId(popularModel.getId());
+                                                tv.setName(popularModel.getName());
+                                                tv.setPoster_path(popularModel.getPoster_path());
+                                                mVideoPopularList.add(tv);
+                                            }
                                         }
                                     }
                                     mPopularAdapter.setData(mVideoPopularList);
+                                }
+                            });
+
+                            topRatedViewModel.getTopRatedData().observe(this, new Observer<List<TopRatedModel>>() {
+                                @Override
+                                public void onChanged(@Nullable List<TopRatedModel> topRatedModels) {
+                                    if (topRatedModels != null) {
+                                        for (TopRatedModel topRatedModel : topRatedModels) {
+                                            Log.d(TAG, topRatedModel.getName());
+
+                                            if (topRatedModel.getMovie()) {
+                                                Movie movie = new Movie();
+
+                                                movie.setId(topRatedModel.getId());
+                                                movie.setTitle(topRatedModel.getName());
+                                                movie.setPoster_path(topRatedModel.getPoster_path());
+                                                mVideoTopRatedList.add(movie);
+                                            } else {
+                                                Tv tv = new Tv();
+
+                                                tv.setId(topRatedModel.getId());
+                                                tv.setName(topRatedModel.getName());
+                                                tv.setPoster_path(topRatedModel.getPoster_path());
+                                                mVideoTopRatedList.add(tv);
+                                            }
+                                        }
+                                    }
+                                    mTopRatedAdapter.setData(mVideoTopRatedList);
                                 }
                             });
                         } else {
                             Toast.makeText(this, "Offline mode without permission", Toast.LENGTH_LONG).show();
                         }
                     }
-
                 }
             }
         }
-    }
-
-    void deleteRecursive(File fileOrDirectory) {
-        Log.d(TAG, "Deleting Folder");
-        if (fileOrDirectory.isDirectory()) {
-            for (File child : fileOrDirectory.listFiles()) {
-                deleteRecursive(child);
-            }
-        }
-
-        fileOrDirectory.delete();
-    }
-
-    private void createFolder() {
-        Log.d(TAG, "Creating Folder");
-        File f = new File(Constants.PATH, Constants.FOLDER_NAME);
-        if (!f.exists()) {
-            if (f.mkdirs()) {
-                Log.d(TAG, "Folder " + Constants.PATH + "/" + Constants.FOLDER_NAME + " created");
-            }
-        }
-    }
-
-    public static Boolean saveBitmapToJPEGFile(Bitmap theTempBitmap, File theTargetFile) {
-        boolean result = true;
-        if (theTempBitmap != null) {
-            FileOutputStream out = null;
-            try {
-                out = new FileOutputStream(theTargetFile);
-                theTempBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            } catch (FileNotFoundException e) {
-                result = false;
-                e.printStackTrace();
-            }
-            if (out != null) {
-                try {
-                    out.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            result = false;
-        }
-        return result;
     }
 
     public static class DownloadImageAsnyc extends AsyncTask<String, Void, Bitmap> {
@@ -501,15 +538,11 @@ public class MainActivity extends AppCompatActivity {
             if (bitmap != null) {
                 File file = new File(Constants.PATH + "/" + Constants.FOLDER_NAME + "/" + mFileName);
 
-                if (saveBitmapToJPEGFile(bitmap, file)) {
+                if (Utils.saveBitmapToJPEGFile(bitmap, file)) {
                     Log.d(TAG, "File " + file.getName() + " Saved");
                 } else {
                     Log.d(TAG, "File " + file.getName() + " NOT Saved");
                 }
-//
-//                if (mFileName.equals("mo0FP1GxOFZT4UDde7RFDz5APXF.jpg")) {
-//                    mImage.setImageDrawable(getBitmap(PATH + "/" + FOLDER_NAME + "/" + "mo0FP1GxOFZT4UDde7RFDz5APXF.jpg"));
-//                }
             }
         }
     }

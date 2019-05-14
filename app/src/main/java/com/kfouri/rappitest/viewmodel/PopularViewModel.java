@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.kfouri.rappitest.persist.dao.PopularDao;
-import com.kfouri.rappitest.persist.database.PopularDatabase;
+import com.kfouri.rappitest.persist.database.Database;
 import com.kfouri.rappitest.persist.model.PopularModel;
 
 import java.util.List;
@@ -17,8 +17,8 @@ public class PopularViewModel extends AndroidViewModel {
 
     public PopularViewModel(@NonNull Application application) {
         super(application);
-        PopularDatabase mPopularDatabase = PopularDatabase.getDatabase(application);
-        mPopularDao = mPopularDatabase.popularDao();
+        Database mDatabase = Database.getDatabase(application);
+        mPopularDao = mDatabase.popularDao();
     }
 
     public LiveData<List<PopularModel>> getPopularData() {
