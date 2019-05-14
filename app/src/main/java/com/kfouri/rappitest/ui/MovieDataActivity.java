@@ -96,7 +96,7 @@ public class MovieDataActivity extends AppCompatActivity {
                 adultTextView.setText(movieDataResponse.getAdult() ? getString(R.string.adult_yes) : getString(R.string.adult_no));
                 popularityTextView.setText(movieDataResponse.getPopularity());
 
-                if (movieDataResponse.getVideo()) {
+                if (movieDataResponse.getVideos().getResults().size() > 0) {
                     Toast.makeText(getApplicationContext(), "Tiene Video " + movieDataResponse.getId(),Toast.LENGTH_LONG).show();
                 }
             }

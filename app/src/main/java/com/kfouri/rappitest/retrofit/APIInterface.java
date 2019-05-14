@@ -25,15 +25,15 @@ public interface APIInterface {
     @GET("4/discover/tv?sort_by=vote_average.desc")
     Call<TvResponse> getTopRatedTvList();
 
-    @GET("4/discover/movie?sort_by=primary_release_date")
+    @GET("4/discover/movie")
     Call<MovieResponse> getUpcomingMovieList(@Query("primary_release_date.gte") String primary_release_date);
 
-    @GET("4/discover/tv?sort_by=primary_release_date")
-    Call<TvResponse> getUpcomingTvList(@Query("primary_release_date.gte") String primary_release_date);
+    @GET("4/discover/tv")
+    Call<TvResponse> getUpcomingTvList(@Query("first_air_date.gte") String primary_release_date);
 
-    @GET("3/movie/{movieId}?api_key=" + Constants.APIKEY + "&language=es-ES")
+    @GET("3/movie/{movieId}?api_key=" + Constants.APIKEY + "&language=es-ES&append_to_response=videos")
     Call<MovieDataResponse> getMovieData(@Path("movieId") Integer movieId);
 
-    @GET("3/tv/{tvId}?api_key=" + Constants.APIKEY + "&language=es-ES")
+    @GET("3/tv/{tvId}?api_key=" + Constants.APIKEY + "&language=es-ES&append_to_response=videos")
     Call<TvDataResponse> getTvData(@Path("tvId") Integer tvId);
 }

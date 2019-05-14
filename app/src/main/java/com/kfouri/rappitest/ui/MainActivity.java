@@ -30,12 +30,14 @@ import com.kfouri.rappitest.model.Video;
 import com.kfouri.rappitest.persist.dao.TopRatedDao;
 import com.kfouri.rappitest.persist.model.PopularModel;
 import com.kfouri.rappitest.persist.model.TopRatedModel;
+import com.kfouri.rappitest.persist.model.UpcomingModel;
 import com.kfouri.rappitest.retrofit.APIClient;
 import com.kfouri.rappitest.retrofit.APIInterface;
 import com.kfouri.rappitest.util.Constants;
 import com.kfouri.rappitest.util.Utils;
 import com.kfouri.rappitest.viewmodel.PopularViewModel;
 import com.kfouri.rappitest.viewmodel.TopRatedViewModel;
+import com.kfouri.rappitest.viewmodel.UpcomingViewModel;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -76,8 +78,10 @@ public class MainActivity extends AppCompatActivity {
     private GenericAdapter mPopularAdapter;
     private GenericAdapter mTopRatedAdapter;
     private GenericAdapter mUpcomingAdapter;
+
     private PopularViewModel popularViewModel;
     private TopRatedViewModel topRatedViewModel;
+    private UpcomingViewModel upcomingViewModel;
 
     private boolean mWriteExternalStorageGranted;
 
@@ -99,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
         popularViewModel = ViewModelProviders.of(this).get(PopularViewModel.class);
         topRatedViewModel = ViewModelProviders.of(this).get(TopRatedViewModel.class);
+        upcomingViewModel = ViewModelProviders.of(this).get(UpcomingViewModel.class);
 
         initView();
         createLayoutManager();
@@ -325,8 +330,32 @@ public class MainActivity extends AppCompatActivity {
     private void collectUpcomingData() {
         if (mIsMovieUpcomingResponded && mIsTvUpcomingResponded) {
             mUpcomingAdapter.setData(mVideoUpcomingList);
-            Log.d(TAG, "collectUpcomingData");
-            // Eliminar y Guardar Datos en BBDD
+
+            if (mWriteExternalStorageGranted && Utils.isNetworkAvailable(this)) {
+                upcomingViewModel.removeAllData();
+
+                int order = 0;
+                for (Video video : mVideoUpcomingList) {
+                    if (video.getPoster_path() != null) {
+                        order++;
+                        UpcomingModel upcomingModel = new UpcomingModel();
+                        upcomingModel.setId(video.getId());
+                        upcomingModel.setName((video instanceof Movie) ? ((Movie)video).getTitle() : ((Tv) video).getName());
+                        upcomingModel.setPoster_path(video.getPoster_path());
+                        upcomingModel.setUpcoming_order(order);
+                        upcomingModel.setMovie((video instanceof Movie));
+                        upcomingViewModel.insertUpcoming(upcomingModel);
+
+                        File file = new File(Constants.PATH + "/" + Constants.FOLDER_NAME + video.getPoster_path());
+                        if (!file.exists()) {
+                            Log.d(TAG, "Downloading " + video.getPoster_path());
+                            new DownloadImageAsnyc(video.getPoster_path()).execute(Constants.IMAGES_URL);
+                        } else {
+                            Log.d(TAG, "File " + video.getPoster_path() + " exist");
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -452,7 +481,7 @@ public class MainActivity extends AppCompatActivity {
                                 public void onChanged(@Nullable List<PopularModel> popularModels) {
                                     if (popularModels != null) {
                                         for (PopularModel popularModel : popularModels) {
-                                            Log.d(TAG, popularModel.getName());
+                                            Log.d(TAG, "Popular name: " + popularModel.getName());
 
                                             if (popularModel.getMovie()) {
                                                 Movie movie = new Movie();
@@ -480,7 +509,7 @@ public class MainActivity extends AppCompatActivity {
                                 public void onChanged(@Nullable List<TopRatedModel> topRatedModels) {
                                     if (topRatedModels != null) {
                                         for (TopRatedModel topRatedModel : topRatedModels) {
-                                            Log.d(TAG, topRatedModel.getName());
+                                            Log.d(TAG, "TopRated name: " + topRatedModel.getName());
 
                                             if (topRatedModel.getMovie()) {
                                                 Movie movie = new Movie();
@@ -502,6 +531,35 @@ public class MainActivity extends AppCompatActivity {
                                     mTopRatedAdapter.setData(mVideoTopRatedList);
                                 }
                             });
+
+                            upcomingViewModel.getUpcomingData().observe(this, new Observer<List<UpcomingModel>>() {
+                                @Override
+                                public void onChanged(@Nullable List<UpcomingModel> upcomingModels) {
+                                    if (upcomingModels != null) {
+                                        for (UpcomingModel upcomingModel : upcomingModels) {
+                                            Log.d(TAG, "Upcoming name: " + upcomingModel.getName() + " " + upcomingModel.getPoster_path());
+
+                                            if (upcomingModel.getMovie()) {
+                                                Movie movie = new Movie();
+
+                                                movie.setId(upcomingModel.getId());
+                                                movie.setTitle(upcomingModel.getName());
+                                                movie.setPoster_path(upcomingModel.getPoster_path());
+                                                mVideoUpcomingList.add(movie);
+                                            } else {
+                                                Tv tv = new Tv();
+
+                                                tv.setId(upcomingModel.getId());
+                                                tv.setName(upcomingModel.getName());
+                                                tv.setPoster_path(upcomingModel.getPoster_path());
+                                                mVideoUpcomingList.add(tv);
+                                            }
+                                        }
+                                    }
+                                    mUpcomingAdapter.setData(mVideoUpcomingList);
+                                }
+                            });
+
                         } else {
                             Toast.makeText(this, "Offline mode without permission", Toast.LENGTH_LONG).show();
                         }

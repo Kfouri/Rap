@@ -15,6 +15,7 @@ public class MovieDataResponse {
     private Boolean video;
     private Float vote_average;
     private Integer vote_count;
+    private VideoPlay videos;
 
     public Boolean getAdult() {
         return adult;
@@ -66,5 +67,13 @@ public class MovieDataResponse {
 
     public Integer getVote_count() {
         return vote_count;
+    }
+
+    public VideoPlay getVideos() {
+        return videos;
+    }
+
+    public void setVideos(VideoPlay videos) {
+        this.videos = videos;
     }
 }
