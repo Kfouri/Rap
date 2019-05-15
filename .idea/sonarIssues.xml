@@ -13,6 +13,36 @@
             <set />
           </value>
         </entry>
+        <entry key="$USER_HOME$/Desktop/TestVideos/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Downloads/Youtube/YouTubeExoPlayer/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Downloads/Youtube/YouTubeExoPlayer/app/src/main/java/testdemo/com/test/Exoplayer.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/Downloads/Youtube/YouTubeExoPlayer/app/src/main/java/testdemo/com/test/MainActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/build.gradle">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/kfouri/rappitest/YouTubeConfig.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/kfouri/rappitest/activity/MovieDataActivity.java">
           <value>
             <set />
@@ -113,6 +143,16 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/kfouri/rappitest/ui/TvDataActivity.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/kfouri/rappitest/util/Constants.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/kfouri/rappitest/util/Utils.java">
           <value>
             <set />
@@ -133,6 +173,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/res/layout/activity_movie_data.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/layout/activity_tv_data.xml">
           <value>
             <set />
@@ -149,6 +194,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/res/values/strings.xml">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$USER_HOME$/remoteSandbox/l-release/packages/apps/tjba/Navigation/res/values/strings.xml">
           <value>
             <set />
           </value>

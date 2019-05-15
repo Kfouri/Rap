@@ -1,19 +1,17 @@
 package com.kfouri.rappitest.ui;
 
-import android.annotation.SuppressLint;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.youtube.player.YouTubeBaseActivity;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerView;
 import com.kfouri.rappitest.R;
-import com.kfouri.rappitest.manager.ExoPlayerManager;
 import com.kfouri.rappitest.model.MovieDataResponse;
 import com.kfouri.rappitest.retrofit.APIClient;
 import com.kfouri.rappitest.retrofit.APIInterface;
@@ -21,14 +19,11 @@ import com.kfouri.rappitest.util.Constants;
 import com.kfouri.rappitest.util.Utils;
 import com.squareup.picasso.Picasso;
 
-import at.huber.youtubeExtractor.VideoMeta;
-import at.huber.youtubeExtractor.YouTubeExtractor;
-import at.huber.youtubeExtractor.YtFile;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MovieDataActivity extends AppCompatActivity {
+public class MovieDataActivity extends YouTubeBaseActivity {
 
     private final String TAG = this.getClass().getSimpleName();
 
@@ -40,7 +35,9 @@ public class MovieDataActivity extends AppCompatActivity {
     private TextView popularityTextView;
     private TextView connectionErrorTextView;
     private ConstraintLayout generalConstraintLayout;
-    private PlayerView mPlayerView;
+    private YouTubePlayerView mYoutubePlayerView;
+    private YouTubePlayer.OnInitializedListener mOnInitializedListener;
+    private String mVideoId;
 
     private APIInterface apiInterface;
 
@@ -68,6 +65,18 @@ public class MovieDataActivity extends AppCompatActivity {
             connectionErrorTextView.setVisibility(View.VISIBLE);
             generalConstraintLayout.setVisibility(View.GONE);
         }
+
+        mOnInitializedListener = new YouTubePlayer.OnInitializedListener() {
+            @Override
+            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+                youTubePlayer.loadVideo(mVideoId);
+            }
+
+            @Override
+            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+
+            }
+        };
     }
 
     private void initView() {
@@ -79,7 +88,7 @@ public class MovieDataActivity extends AppCompatActivity {
         popularityTextView = findViewById(R.id.txtPopularity);
         connectionErrorTextView = findViewById(R.id.connectionError);
         generalConstraintLayout = findViewById(R.id.generalConstraintLayout);
-        mPlayerView = findViewById(R.id.mPlayerView);
+        mYoutubePlayerView = findViewById(R.id.youtubePlayerView);
     }
 
     private void setPosterImage() {
@@ -107,9 +116,9 @@ public class MovieDataActivity extends AppCompatActivity {
 
                 if (movieDataResponse.getVideos().getResults().size() > 0) {
                     if (movieDataResponse.getVideos().getResults().get(0).getSite().equals("YouTube")) {
-                        Utils.extractYoutubeUrl(MovieDataActivity.this, mPlayerView, Constants.YOUTUBE_URL + movieDataResponse.getVideos().getResults().get(0).getKey());
-                    } else {
-                        mPlayerView.setVisibility(View.GONE);
+                        mYoutubePlayerView.setVisibility(View.VISIBLE);
+                        mVideoId = movieDataResponse.getVideos().getResults().get(0).getKey();
+                        mYoutubePlayerView.initialize(Constants.YOUTUBE_API_KEY,mOnInitializedListener);
                     }
                 }
             }
@@ -121,9 +130,4 @@ public class MovieDataActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    protected void onStop() {
-        super.onStop();
-        ExoPlayerManager.getSharedInstance(MovieDataActivity.this).destroyPlayer();
-    }
 }

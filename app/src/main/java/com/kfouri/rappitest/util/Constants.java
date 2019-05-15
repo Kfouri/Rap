@@ -12,4 +12,5 @@ public class Constants {
     public static final String FOLDER_NAME = "rappitest";
     public static final File PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
     public static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
+    public static String YOUTUBE_API_KEY = "AIzaSyCPiVwSkXeGKyLdlF-pfiCBhlAgTMBroGU";
 }

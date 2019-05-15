@@ -1,21 +1,20 @@
 package com.kfouri.rappitest.ui;
 
-import android.annotation.SuppressLint;
 import android.support.constraint.ConstraintLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.android.youtube.player.YouTubeBaseActivity;
+import com.google.android.youtube.player.YouTubeInitializationResult;
+import com.google.android.youtube.player.YouTubePlayer;
+import com.google.android.youtube.player.YouTubePlayerView;
 import com.kfouri.rappitest.R;
 import com.kfouri.rappitest.adapter.SeasonAdapter;
-import com.kfouri.rappitest.manager.ExoPlayerManager;
 import com.kfouri.rappitest.model.TvDataResponse;
 import com.kfouri.rappitest.retrofit.APIClient;
 import com.kfouri.rappitest.retrofit.APIInterface;
@@ -23,14 +22,11 @@ import com.kfouri.rappitest.util.Constants;
 import com.kfouri.rappitest.util.Utils;
 import com.squareup.picasso.Picasso;
 
-import at.huber.youtubeExtractor.VideoMeta;
-import at.huber.youtubeExtractor.YouTubeExtractor;
-import at.huber.youtubeExtractor.YtFile;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class TvDataActivity extends AppCompatActivity {
+public class TvDataActivity extends YouTubeBaseActivity {
 
     private final String TAG = this.getClass().getSimpleName();
 
@@ -47,9 +43,11 @@ public class TvDataActivity extends AppCompatActivity {
     private TextView voteAverageTextView;
     private TextView connectionErrorTextView;
     private ConstraintLayout generalConstraintLayout;
-    private PlayerView mPlayerView;
     private RecyclerView mSeasonRecycler;
     private SeasonAdapter mSeasonAdapter;
+    private YouTubePlayerView mYoutubePlayerView;
+    private YouTubePlayer.OnInitializedListener mOnInitializedListener;
+    private String mVideoId;
 
     private APIInterface apiInterface;
 
@@ -80,6 +78,18 @@ public class TvDataActivity extends AppCompatActivity {
             connectionErrorTextView.setVisibility(View.VISIBLE);
             generalConstraintLayout.setVisibility(View.GONE);
         }
+
+        mOnInitializedListener = new YouTubePlayer.OnInitializedListener() {
+            @Override
+            public void onInitializationSuccess(YouTubePlayer.Provider provider, YouTubePlayer youTubePlayer, boolean b) {
+                youTubePlayer.loadVideo(mVideoId);
+            }
+
+            @Override
+            public void onInitializationFailure(YouTubePlayer.Provider provider, YouTubeInitializationResult youTubeInitializationResult) {
+
+            }
+        };
     }
 
     private void initView() {
@@ -96,7 +106,7 @@ public class TvDataActivity extends AppCompatActivity {
         voteAverageTextView = findViewById(R.id.vote_average);
         connectionErrorTextView = findViewById(R.id.connectionError);
         generalConstraintLayout = findViewById(R.id.generalConstraintLayout);
-        mPlayerView = findViewById(R.id.mPlayerView);
+        mYoutubePlayerView = findViewById(R.id.youtubePlayerView);
 
         mSeasonRecycler = findViewById(R.id.seasonList);
         mSeasonRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -144,10 +154,12 @@ public class TvDataActivity extends AppCompatActivity {
 
                 if (tvDataResponse.getVideos().getResults().size() > 0) {
                     if (tvDataResponse.getVideos().getResults().get(0).getSite().equals("YouTube")) {
-                        Utils.extractYoutubeUrl(TvDataActivity.this, mPlayerView, Constants.YOUTUBE_URL + tvDataResponse.getVideos().getResults().get(0).getKey());
+                        mYoutubePlayerView.setVisibility(View.VISIBLE);
+                        mVideoId = tvDataResponse.getVideos().getResults().get(0).getKey();
+                        mYoutubePlayerView.initialize(Constants.YOUTUBE_API_KEY,mOnInitializedListener);
                     }
                 } else {
-                    mPlayerView.setVisibility(View.GONE);
+
                 }
 
                 mSeasonAdapter.setData(tvDataResponse.getSeasons());
@@ -160,10 +172,4 @@ public class TvDataActivity extends AppCompatActivity {
         });
     }
 
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        ExoPlayerManager.getSharedInstance(TvDataActivity.this).destroyPlayer();
-    }
 }
