@@ -1,15 +1,19 @@
 package com.kfouri.rappitest.ui;
 
+import android.annotation.SuppressLint;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.kfouri.rappitest.R;
+import com.kfouri.rappitest.manager.ExoPlayerManager;
 import com.kfouri.rappitest.model.MovieDataResponse;
 import com.kfouri.rappitest.retrofit.APIClient;
 import com.kfouri.rappitest.retrofit.APIInterface;
@@ -17,6 +21,9 @@ import com.kfouri.rappitest.util.Constants;
 import com.kfouri.rappitest.util.Utils;
 import com.squareup.picasso.Picasso;
 
+import at.huber.youtubeExtractor.VideoMeta;
+import at.huber.youtubeExtractor.YouTubeExtractor;
+import at.huber.youtubeExtractor.YtFile;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,6 +40,7 @@ public class MovieDataActivity extends AppCompatActivity {
     private TextView popularityTextView;
     private TextView connectionErrorTextView;
     private ConstraintLayout generalConstraintLayout;
+    private PlayerView mPlayerView;
 
     private APIInterface apiInterface;
 
@@ -71,6 +79,7 @@ public class MovieDataActivity extends AppCompatActivity {
         popularityTextView = findViewById(R.id.txtPopularity);
         connectionErrorTextView = findViewById(R.id.connectionError);
         generalConstraintLayout = findViewById(R.id.generalConstraintLayout);
+        mPlayerView = findViewById(R.id.mPlayerView);
     }
 
     private void setPosterImage() {
@@ -97,7 +106,11 @@ public class MovieDataActivity extends AppCompatActivity {
                 popularityTextView.setText(movieDataResponse.getPopularity());
 
                 if (movieDataResponse.getVideos().getResults().size() > 0) {
-                    Toast.makeText(getApplicationContext(), "Tiene Video " + movieDataResponse.getId(),Toast.LENGTH_LONG).show();
+                    if (movieDataResponse.getVideos().getResults().get(0).getSite().equals("YouTube")) {
+                        Utils.extractYoutubeUrl(MovieDataActivity.this, mPlayerView, Constants.YOUTUBE_URL + movieDataResponse.getVideos().getResults().get(0).getKey());
+                    } else {
+                        mPlayerView.setVisibility(View.GONE);
+                    }
                 }
             }
 
@@ -108,4 +121,9 @@ public class MovieDataActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ExoPlayerManager.getSharedInstance(MovieDataActivity.this).destroyPlayer();
+    }
 }

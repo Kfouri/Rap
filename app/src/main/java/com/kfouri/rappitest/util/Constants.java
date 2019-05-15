@@ -11,4 +11,5 @@ public class Constants {
     public static final String IMAGES_URL = "http://image.tmdb.org/t/p/w500";
     public static final String FOLDER_NAME = "rappitest";
     public static final File PATH = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM);
+    public static final String YOUTUBE_URL = "https://www.youtube.com/watch?v=";
 }

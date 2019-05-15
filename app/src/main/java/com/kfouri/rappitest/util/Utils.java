@@ -1,15 +1,25 @@
 package com.kfouri.rappitest.util;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.util.SparseArray;
+
+import com.google.android.exoplayer2.ui.PlayerView;
+import com.kfouri.rappitest.manager.ExoPlayerManager;
+import com.kfouri.rappitest.ui.MovieDataActivity;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+import at.huber.youtubeExtractor.VideoMeta;
+import at.huber.youtubeExtractor.YouTubeExtractor;
+import at.huber.youtubeExtractor.YtFile;
 
 public class Utils {
 
@@ -67,5 +77,22 @@ public class Utils {
             result = false;
         }
         return result;
+    }
+
+    public static void extractYoutubeUrl(final Context context, final PlayerView playerView, String url) {
+        @SuppressLint("StaticFieldLeak") YouTubeExtractor mExtractor = new YouTubeExtractor(context) {
+            @Override
+            protected void onExtractionComplete(SparseArray<YtFile> sparseArray, VideoMeta videoMeta) {
+                if (sparseArray != null) {
+                    playVideo(context, playerView, sparseArray.get(22).getUrl());
+                }
+            }
+        };
+        mExtractor.extract(url, true, true);
+    }
+
+    private static void playVideo(Context context, PlayerView playerView, String downloadUrl) {
+        playerView.setPlayer(ExoPlayerManager.getSharedInstance(context).getPlayerView().getPlayer());
+        ExoPlayerManager.getSharedInstance(context).playStream(downloadUrl);
     }
 }
