@@ -55,7 +55,9 @@ Ingresando a las peliculas/series se puede ver el detalle de cada una como por e
 ## Responsabilidades
 
 ##### En qué consiste el principio de responsabilidad única? Cuál es su propósito?
+   El Principio de responsabilidad única es el primero de los cinco que componen SOLID que basicamente dice que un objeto debe realizar una única cosa, debe tener solo un objetivo, debe ser atomico. Esto nos protege de futuros cambios.
 
 ##### Qué características tiene, según su opinión, un “buen” código o código limpio?
+   El codigo limpio debe ser algo vital en el desarrollo de una aplicación, ya que un codigo limpio es mas facil de leer e interpretar ya sea por quien lo hizo o de futuros desarrolladores. Si el codigo es entendible o sea.. si la nomenclatura de los metodos o variables son suficientemente claros no haria falta agregar comentarios para explicar que hace el codigo.
 
 
