@@ -68,7 +68,7 @@ public class GenericAdapter extends RecyclerView.Adapter<GenericAdapter.ViewHold
         } else {
             if (checkForWriteExternalStoragePermission()) {
                 Log.d(TAG, "reading file from local");
-                viewHolder.imgPoster.setImageDrawable(getBitmap(Constants.PATH + "/" + Constants.FOLDER_NAME + item.getPoster_path()));
+                viewHolder.imgPoster.setImageDrawable(getBitmap(mContext.getFilesDir() + "/" + Constants.FOLDER_NAME + item.getPoster_path()));
             } else {
                 Log.d(TAG, "No file to read");
             }
