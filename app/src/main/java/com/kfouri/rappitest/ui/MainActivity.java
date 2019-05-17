@@ -17,7 +17,9 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kfouri.rappitest.R;
@@ -57,7 +59,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private APIInterface apiInterface;
+    private APIInterface mApiInterface;
     private ArrayList<Video> mVideoPopularList;
     private ArrayList<Video> mVideoTopRatedList;
     private ArrayList<Video> mVideoUpcomingList;
@@ -67,13 +69,14 @@ public class MainActivity extends AppCompatActivity {
     private boolean mIsMovieTopRatedResponded;
     private boolean mIsTvUpcomingResponded;
     private boolean mIsMovieUpcomingResponded;
-    private EditText popularFilter;
-    private EditText topRatedFilter;
-    private EditText upcomingFilter;
+    private EditText mPopularFilter;
+    private EditText mTopRatedFilter;
+    private EditText mUpcomingFilter;
+    private TextView mOfflineMode;
     private GenericAdapter mPopularAdapter;
     private GenericAdapter mTopRatedAdapter;
     private GenericAdapter mUpcomingAdapter;
-    private MainActivityViewModel mainActivityViewModel;
+    private MainActivityViewModel mMainActivityViewModel;
 
     private boolean mWriteExternalStorageGranted;
 
@@ -91,9 +94,9 @@ public class MainActivity extends AppCompatActivity {
         mVideoTopRatedList = new ArrayList();
         mVideoUpcomingList = new ArrayList();
 
-        apiInterface = APIClient.getClient().create(APIInterface.class);
+        mApiInterface = APIClient.getClient().create(APIInterface.class);
 
-        mainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        mMainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
 
         initView();
         createLayoutManager();
@@ -116,10 +119,10 @@ public class MainActivity extends AppCompatActivity {
         mPopularRecycler = findViewById(R.id.popularList);
         mTopRatedRecycler = findViewById(R.id.topRatedList);
         mUpcomingRecycler = findViewById(R.id.upcomingList);
-        popularFilter = findViewById(R.id.popularFilter);
-        topRatedFilter = findViewById(R.id.topRatedFilter);
-        upcomingFilter = findViewById(R.id.upcomingFilter);
-
+        mPopularFilter = findViewById(R.id.popularFilter);
+        mTopRatedFilter = findViewById(R.id.topRatedFilter);
+        mUpcomingFilter = findViewById(R.id.upcomingFilter);
+        mOfflineMode = findViewById(R.id.offlineMode);
     }
 
     private void createLayoutManager() {
@@ -134,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setFilter() {
 
-        popularFilter.addTextChangedListener(new TextWatcher() {
+        mPopularFilter.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -147,7 +150,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        topRatedFilter.addTextChangedListener(new TextWatcher() {
+        mTopRatedFilter.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -160,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        upcomingFilter.addTextChangedListener(new TextWatcher() {
+        mUpcomingFilter.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
             }
@@ -175,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getTvPopularList() {
-        Call<TvResponse> call = apiInterface.getPopularTvList();
+        Call<TvResponse> call = mApiInterface.getPopularTvList();
 
         call.enqueue(new Callback<TvResponse>() {
             @Override
@@ -195,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getMoviePopularList() {
-        Call<MovieResponse> call = apiInterface.getPopularMovieList();
+        Call<MovieResponse> call = mApiInterface.getPopularMovieList();
 
         call.enqueue(new Callback<MovieResponse>() {
             @Override
@@ -216,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getTvTopRatedeList() {
-        Call<TvResponse> call = apiInterface.getTopRatedTvList();
+        Call<TvResponse> call = mApiInterface.getTopRatedTvList();
 
         call.enqueue(new Callback<TvResponse>() {
             @Override
@@ -239,7 +242,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getMovieTopRatedList() {
-        Call<MovieResponse> call = apiInterface.getTopRatedMovieList();
+        Call<MovieResponse> call = mApiInterface.getTopRatedMovieList();
 
         call.enqueue(new Callback<MovieResponse>() {
             @Override
@@ -267,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         String today = df.format(currentTime.getTime());
 
-        Call<MovieResponse> call = apiInterface.getUpcomingMovieList(today);
+        Call<MovieResponse> call = mApiInterface.getUpcomingMovieList(today);
 
         call.enqueue(new Callback<MovieResponse>() {
             @Override
@@ -295,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         String today = df.format(currentTime.getTime());
 
-        Call<TvResponse> call = apiInterface.getUpcomingTvList(today);
+        Call<TvResponse> call = mApiInterface.getUpcomingTvList(today);
 
         call.enqueue(new Callback<TvResponse>() {
             @Override
@@ -322,7 +325,7 @@ public class MainActivity extends AppCompatActivity {
             mUpcomingAdapter.setData(mVideoUpcomingList);
 
             if (mWriteExternalStorageGranted && Utils.isNetworkAvailable(this)) {
-                mainActivityViewModel.removeAllUpcomingData();
+                mMainActivityViewModel.removeAllUpcomingData();
 
                 int order = 0;
                 for (Video video : mVideoUpcomingList) {
@@ -334,7 +337,7 @@ public class MainActivity extends AppCompatActivity {
                         upcomingModel.setPoster_path(video.getPoster_path());
                         upcomingModel.setUpcoming_order(order);
                         upcomingModel.setMovie((video instanceof Movie));
-                        mainActivityViewModel.insertUpcoming(upcomingModel);
+                        mMainActivityViewModel.insertUpcoming(upcomingModel);
 
                         File file = new File(Constants.PATH + "/" + Constants.FOLDER_NAME + video.getPoster_path());
                         if (!file.exists()) {
@@ -362,7 +365,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (mWriteExternalStorageGranted && Utils.isNetworkAvailable(this)) {
 
-                mainActivityViewModel.removeAllPopularData();
+                mMainActivityViewModel.removeAllPopularData();
 
                 int order = 0;
                 for (Video video : mVideoPopularList) {
@@ -375,7 +378,7 @@ public class MainActivity extends AppCompatActivity {
                         popularModel.setPoster_path(video.getPoster_path());
                         popularModel.setPopular_order(order);
                         popularModel.setMovie((video instanceof Movie));
-                        mainActivityViewModel.insertPopular(popularModel);
+                        mMainActivityViewModel.insertPopular(popularModel);
 
                         File file = new File(Constants.PATH + "/" + Constants.FOLDER_NAME + video.getPoster_path());
                         if (!file.exists()) {
@@ -403,7 +406,7 @@ public class MainActivity extends AppCompatActivity {
             mTopRatedAdapter.setData(mVideoTopRatedList);
 
             if (mWriteExternalStorageGranted && Utils.isNetworkAvailable(this)) {
-                mainActivityViewModel.removeAllTopRatedData();
+                mMainActivityViewModel.removeAllTopRatedData();
 
                 int order = 0;
                 for (Video video : mVideoTopRatedList) {
@@ -416,7 +419,7 @@ public class MainActivity extends AppCompatActivity {
                         topRatedModel.setPoster_path(video.getPoster_path());
                         topRatedModel.setToprated_order(order);
                         topRatedModel.setMovie((video instanceof Movie));
-                        mainActivityViewModel.insertTopRated(topRatedModel);
+                        mMainActivityViewModel.insertTopRated(topRatedModel);
 
                         File file = new File(Constants.PATH + "/" + Constants.FOLDER_NAME + video.getPoster_path());
                         if (!file.exists()) {
@@ -465,8 +468,8 @@ public class MainActivity extends AppCompatActivity {
 
                     } else {
                         if (mWriteExternalStorageGranted) {
-                            Toast.makeText(this, "Offline mode", Toast.LENGTH_LONG).show();
-                            mainActivityViewModel.getPopularData().observe(this, new Observer<List<PopularModel>>() {
+                            mOfflineMode.setVisibility(View.VISIBLE);
+                            mMainActivityViewModel.getPopularData().observe(this, new Observer<List<PopularModel>>() {
                                 @Override
                                 public void onChanged(@Nullable List<PopularModel> popularModels) {
                                     if (popularModels != null) {
@@ -494,7 +497,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
 
-                            mainActivityViewModel.getTopRatedData().observe(this, new Observer<List<TopRatedModel>>() {
+                            mMainActivityViewModel.getTopRatedData().observe(this, new Observer<List<TopRatedModel>>() {
                                 @Override
                                 public void onChanged(@Nullable List<TopRatedModel> topRatedModels) {
                                     if (topRatedModels != null) {
@@ -522,7 +525,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                             });
 
-                            mainActivityViewModel.getUpcomingData().observe(this, new Observer<List<UpcomingModel>>() {
+                            mMainActivityViewModel.getUpcomingData().observe(this, new Observer<List<UpcomingModel>>() {
                                 @Override
                                 public void onChanged(@Nullable List<UpcomingModel> upcomingModels) {
                                     if (upcomingModels != null) {

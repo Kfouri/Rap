@@ -18,5 +18,6 @@
     <string name="season">Temporadas</string>
     <string name="information_cached">Looking for information cached</string>
     <string name="connection_error">"No es posible conectarse con RappiTest"</string>
+    <string name="offline_mode">Modo Offline</string>
 
 </resources>

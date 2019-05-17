@@ -14,17 +14,33 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusableInTouchMode="true">
+
+            <TextView
+                android:id="@+id/offlineMode"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:padding="5dp"
+                android:textColor="#FFFFFF"
+                android:background="#000000"
+                android:text="@string/offline_mode"
+                android:visibility="gone"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:text="@string/popularity"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/popularList"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/offlineMode" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/popularList"
@@ -36,21 +52,18 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/popularFilter" />
 
-
             <EditText
                 android:id="@+id/popularFilter"
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:layout_marginEnd="8dp"
-                android:textSize="15sp"
-                android:inputType="text"
-                android:hint="@string/searchPopular"
-                android:focusable="true"
+                android:layout_marginEnd="40dp"
                 android:drawableStart="@drawable/search"
+                android:focusable="true"
+                android:hint="@string/searchPopular"
+                android:inputType="text"
+                android:textSize="15sp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
+                app:layout_constraintTop_toBottomOf="@+id/offlineMode"/>
 
             <TextView
                 android:layout_width="wrap_content"
