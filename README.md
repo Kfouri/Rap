@@ -24,8 +24,8 @@ Ingresando a las peliculas/series se puede ver el detalle de cada una como por e
 
 ## Responsabilidades
 
-### En qué consiste el principio de responsabilidad única? Cuál es su propósito?
+##### En qué consiste el principio de responsabilidad única? Cuál es su propósito?
 
-### Qué características tiene, según su opinión, un “buen” código o código limpio?
+##### Qué características tiene, según su opinión, un “buen” código o código limpio?
 
 
