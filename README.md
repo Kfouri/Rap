@@ -17,10 +17,40 @@ Ingresando a las peliculas/series se puede ver el detalle de cada una como por e
 ## Capas de la aplicación
 
 * Vistas
+  * SplashActivity
+  * MainActivity
+  * MovieDataActivity
+  * TvDataActivity
+  * GenericAdapter
+  * SeasonAdapter
 * Modelos
+  * Movie
+  * Tv
+  * Video
+  * VideoDetail
+  * VideoPlay
+  * Season
+  * MovieDataResponse
+  * MovieResponse
+  * TvDataResponse
+  * TvResponse
 * Controlador
+  * MainActivityViewModel
+  * APIInterface
 * Persistencia
+   * Dao
+     * PopularDao
+     * TopRatedDao
+     * UpcomingDao
+   * Database
+     * Database
+   * Model
+     * PopularModel
+     * TopRatedModel
+     * UpcomingModel
 * Helpers
+  * Utils
+  * Constants
 
 ## Responsabilidades
 
