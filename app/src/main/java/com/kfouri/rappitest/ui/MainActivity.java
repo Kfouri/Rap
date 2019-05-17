@@ -32,8 +32,6 @@ import com.kfouri.rappitest.model.Video;
 import com.kfouri.rappitest.persist.model.PopularModel;
 import com.kfouri.rappitest.persist.model.TopRatedModel;
 import com.kfouri.rappitest.persist.model.UpcomingModel;
-import com.kfouri.rappitest.retrofit.APIClient;
-import com.kfouri.rappitest.retrofit.APIInterface;
 import com.kfouri.rappitest.util.Constants;
 import com.kfouri.rappitest.util.Utils;
 import com.kfouri.rappitest.viewmodel.MainActivityViewModel;
@@ -42,24 +40,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private APIInterface mApiInterface;
     private ArrayList<Video> mVideoPopularList;
     private ArrayList<Video> mVideoTopRatedList;
     private ArrayList<Video> mVideoUpcomingList;
@@ -93,8 +81,6 @@ public class MainActivity extends AppCompatActivity {
         mVideoPopularList = new ArrayList();
         mVideoTopRatedList = new ArrayList();
         mVideoUpcomingList = new ArrayList();
-
-        mApiInterface = APIClient.getClient().create(APIInterface.class);
 
         mMainActivityViewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
 
@@ -178,144 +164,79 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getTvPopularList() {
-        Call<TvResponse> call = mApiInterface.getPopularTvList();
-
-        call.enqueue(new Callback<TvResponse>() {
+        mMainActivityViewModel.getTvPopular().observe(this, new Observer<TvResponse>() {
             @Override
-            public void onResponse(Call<TvResponse> call, Response<TvResponse> response) {
-                TvResponse movieResponse = response.body();
-
-                mVideoPopularList.addAll(movieResponse.getResults());
-                mIsTvPopularResponded = true;
-                reorderPopularList();
-            }
-
-            @Override
-            public void onFailure(Call<TvResponse> call, Throwable t) {
-                Log.d(TAG, "onFailure getTvPopularList()");
+            public void onChanged(@Nullable TvResponse data) {
+                if (data != null) {
+                    mVideoPopularList.addAll(data.getResults());
+                    mIsTvPopularResponded = true;
+                    reorderPopularList();
+                }
             }
         });
     }
 
     private void getMoviePopularList() {
-        Call<MovieResponse> call = mApiInterface.getPopularMovieList();
-
-        call.enqueue(new Callback<MovieResponse>() {
+        mMainActivityViewModel.getMoviePopular().observe(this, new Observer<MovieResponse>() {
             @Override
-            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-
-                MovieResponse movieResponse = response.body();
-
-                mVideoPopularList.addAll(movieResponse.getResults());
-                mIsMoviePopularResponded = true;
-                reorderPopularList();
-            }
-
-            @Override
-            public void onFailure(Call<MovieResponse> call, Throwable t) {
-                Log.d(TAG, "onFailure getMoviePopularList()");
+            public void onChanged(@Nullable MovieResponse data) {
+                if (data != null) {
+                    mVideoPopularList.addAll(data.getResults());
+                    mIsMoviePopularResponded = true;
+                    reorderPopularList();
+                }
             }
         });
     }
 
     private void getTvTopRatedeList() {
-        Call<TvResponse> call = mApiInterface.getTopRatedTvList();
-
-        call.enqueue(new Callback<TvResponse>() {
+        mMainActivityViewModel.getTvTopRated().observe(this, new Observer<TvResponse>() {
             @Override
-            public void onResponse(Call<TvResponse> call, Response<TvResponse> response) {
-                TvResponse movieResponse = response.body();
-                mIsTvTopRatedResponded = true;
-
-                if (movieResponse != null) {
-                    mVideoTopRatedList.addAll(movieResponse.getResults());
+            public void onChanged(@Nullable TvResponse data) {
+                if (data != null) {
+                    mVideoTopRatedList.addAll(data.getResults());
+                    mIsTvTopRatedResponded = true;
                     reorderTopRatedList();
                 }
-
-            }
-
-            @Override
-            public void onFailure(Call<TvResponse> call, Throwable t) {
-                Log.d(TAG, "onFailure getTvTopRatedeList()");
             }
         });
     }
 
     private void getMovieTopRatedList() {
-        Call<MovieResponse> call = mApiInterface.getTopRatedMovieList();
-
-        call.enqueue(new Callback<MovieResponse>() {
+        mMainActivityViewModel.getMovieTopRated().observe(this, new Observer<MovieResponse>() {
             @Override
-            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-
-                MovieResponse movieResponse = response.body();
-                mIsMovieTopRatedResponded = true;
-
-                if (movieResponse != null) {
-                    mVideoTopRatedList.addAll(movieResponse.getResults());
+            public void onChanged(@Nullable MovieResponse data) {
+                if (data != null) {
+                    mVideoTopRatedList.addAll(data.getResults());
+                    mIsMovieTopRatedResponded = true;
                     reorderTopRatedList();
                 }
-
-            }
-
-            @Override
-            public void onFailure(Call<MovieResponse> call, Throwable t) {
-                Log.d(TAG, "onFailure getMovieTopRatedList()");
             }
         });
     }
 
     private void getMovieUpcomingList() {
-        Date currentTime = Calendar.getInstance().getTime();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        String today = df.format(currentTime.getTime());
-
-        Call<MovieResponse> call = mApiInterface.getUpcomingMovieList(today);
-
-        call.enqueue(new Callback<MovieResponse>() {
+        mMainActivityViewModel.getMovieUpcoming().observe(this, new Observer<MovieResponse>() {
             @Override
-            public void onResponse(Call<MovieResponse> call, Response<MovieResponse> response) {
-
-                MovieResponse movieResponse = response.body();
-
-                if (movieResponse != null) {
-                    mVideoUpcomingList.addAll(movieResponse.getResults());
+            public void onChanged(@Nullable MovieResponse data) {
+                if (data != null) {
+                    mVideoUpcomingList.addAll(data.getResults());
                     mIsMovieUpcomingResponded = true;
                     collectUpcomingData();
                 }
-
-            }
-
-            @Override
-            public void onFailure(Call<MovieResponse> call, Throwable t) {
-                Log.d(TAG, "onFailure getMovieUpcomingList()");
             }
         });
     }
 
     private void getTvUpcomingList() {
-        Date currentTime = Calendar.getInstance().getTime();
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-        String today = df.format(currentTime.getTime());
-
-        Call<TvResponse> call = mApiInterface.getUpcomingTvList(today);
-
-        call.enqueue(new Callback<TvResponse>() {
+        mMainActivityViewModel.getTvUpcoming().observe(this, new Observer<TvResponse>() {
             @Override
-            public void onResponse(Call<TvResponse> call, Response<TvResponse> response) {
-
-                TvResponse tvResponse = response.body();
-
-                if (tvResponse != null) {
-                    mVideoUpcomingList.addAll(tvResponse.getResults());
+            public void onChanged(@Nullable TvResponse data) {
+                if (data != null) {
+                    mVideoUpcomingList.addAll(data.getResults());
                     mIsTvUpcomingResponded = true;
                     collectUpcomingData();
                 }
-            }
-
-            @Override
-            public void onFailure(Call<TvResponse> call, Throwable t) {
-                Log.d(TAG, "onFailure getTvUpcomingList()");
             }
         });
     }

@@ -183,6 +183,11 @@
             <set />
           </value>
         </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/kfouri/rappitest/retrofit/VideoRepository.java">
+          <value>
+            <set />
+          </value>
+        </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/kfouri/rappitest/ui/MainActivity.java">
           <value>
             <set />
@@ -204,6 +209,11 @@
           </value>
         </entry>
         <entry key="$PROJECT_DIR$/app/src/main/java/com/kfouri/rappitest/util/Utils.java">
+          <value>
+            <set />
+          </value>
+        </entry>
+        <entry key="$PROJECT_DIR$/app/src/main/java/com/kfouri/rappitest/viewmodel/MainActivityViewModel.java">
           <value>
             <set />
           </value>

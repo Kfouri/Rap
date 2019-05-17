@@ -6,6 +6,9 @@ import android.arch.lifecycle.LiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import com.kfouri.rappitest.model.MovieResponse;
+import com.kfouri.rappitest.model.TvResponse;
+import com.kfouri.rappitest.model.Video;
 import com.kfouri.rappitest.persist.dao.PopularDao;
 import com.kfouri.rappitest.persist.dao.TopRatedDao;
 import com.kfouri.rappitest.persist.dao.UpcomingDao;
@@ -13,10 +16,17 @@ import com.kfouri.rappitest.persist.database.Database;
 import com.kfouri.rappitest.persist.model.PopularModel;
 import com.kfouri.rappitest.persist.model.TopRatedModel;
 import com.kfouri.rappitest.persist.model.UpcomingModel;
+import com.kfouri.rappitest.retrofit.VideoRepository;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class MainActivityViewModel extends AndroidViewModel {
+
     private PopularDao mPopularDao;
     private TopRatedDao mTopRatedDao;
     private UpcomingDao mUpcomingDao;
@@ -31,12 +41,34 @@ public class MainActivityViewModel extends AndroidViewModel {
         return mUpcomingDao.getUpcoming();
     }
 
+    private final LiveData<MovieResponse> mMoviePopularList;
+    private final LiveData<TvResponse> mTvPopularList;
+
+    private final LiveData<MovieResponse> mMovieTopRatedList;
+    private final LiveData<TvResponse> mTvTopRatedList;
+
+    private final LiveData<MovieResponse> mMovieUpcomingList;
+    private final LiveData<TvResponse> mTvUpcomingList;
+
     public MainActivityViewModel(@NonNull Application application) {
         super(application);
         Database mDatabase = Database.getDatabase(application);
         mPopularDao = mDatabase.popularDao();
         mTopRatedDao = mDatabase.topRatedDao();
         mUpcomingDao = mDatabase.upcomingDao();
+
+        mMoviePopularList = VideoRepository.getInstance().getMoviePopular();
+        mTvPopularList = VideoRepository.getInstance().getTvPopular();
+
+        mMovieTopRatedList = VideoRepository.getInstance().getMovieTopRated();
+        mTvTopRatedList = VideoRepository.getInstance().getTvTopRated();
+
+        Date currentTime = Calendar.getInstance().getTime();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        String today = df.format(currentTime.getTime());
+
+        mMovieUpcomingList = VideoRepository.getInstance().getMovieUpcoming(today);
+        mTvUpcomingList = VideoRepository.getInstance().getTvUpcoming(today);
     }
 
     public void insertPopular(PopularModel popularModel) {
@@ -157,4 +189,29 @@ public class MainActivityViewModel extends AndroidViewModel {
             return null;
         }
     }
+
+    public  LiveData<MovieResponse> getMoviePopular() {
+        return mMoviePopularList;
+    }
+
+    public  LiveData<TvResponse> getTvPopular() {
+        return mTvPopularList;
+    }
+
+    public  LiveData<MovieResponse> getMovieTopRated() {
+        return mMovieTopRatedList;
+    }
+
+    public  LiveData<TvResponse> getTvTopRated() {
+        return mTvTopRatedList;
+    }
+
+    public  LiveData<MovieResponse> getMovieUpcoming() {
+        return mMovieUpcomingList;
+    }
+
+    public  LiveData<TvResponse> getTvUpcoming() {
+        return mTvUpcomingList;
+    }
+
 }
