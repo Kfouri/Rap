@@ -2,7 +2,7 @@
 
 En esta aplicación se demuestra el uso y consumo del webservice de themoviedb para Android.
 
-Esta compuesto por tres categorías
+El desarrollo esta compuesto por una pantalla principal en el cual esta dividida en tres categorías:
 
   * Popularity
   * Top Rated
