@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.facebook.shimmer.ShimmerFrameLayout;
 import com.kfouri.rappitest.R;
 import com.kfouri.rappitest.adapter.GenericAdapter;
 import com.kfouri.rappitest.model.Movie;
@@ -65,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
     private GenericAdapter mTopRatedAdapter;
     private GenericAdapter mUpcomingAdapter;
     private MainActivityViewModel mMainActivityViewModel;
+    private TextView mPopularTitle;
+    private TextView mTopRatedTitle;
+    private TextView mUpcomingTitle;
 
     private boolean mWriteExternalStorageGranted;
 
@@ -73,6 +77,9 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mUpcomingRecycler;
 
     private static final int REQUEST_CODE = 1;
+
+    private ShimmerFrameLayout mShimmerViewContainer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +106,136 @@ public class MainActivity extends AppCompatActivity {
 
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},REQUEST_CODE);
+        mShimmerViewContainer.startShimmerAnimation();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CODE) {
+            for (int i = 0; i < permissions.length; i++) {
+                String permission = permissions[i];
+                int grantResult = grantResults[i];
+
+                if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    if (grantResult == PackageManager.PERMISSION_GRANTED) {
+                        mWriteExternalStorageGranted = true;
+                        if (Utils.isNetworkAvailable(this)) {
+                            Utils.deleteRecursive(new File(Constants.PATH, Constants.FOLDER_NAME));
+                            Utils.createFolder();
+                        }
+                    } else {
+                        mWriteExternalStorageGranted = false;
+                        Toast.makeText(this, "Offline disabled", Toast.LENGTH_LONG).show();
+                    }
+
+                    if (Utils.isNetworkAvailable(this)) {
+
+                        getTvPopularList();
+                        getMoviePopularList();
+
+                        getTvTopRatedeList();
+                        getMovieTopRatedList();
+
+                        getMovieUpcomingList();
+                        getTvUpcomingList();
+
+                    } else {
+                        showUI();
+                        if (mWriteExternalStorageGranted) {
+                            mOfflineMode.setVisibility(View.VISIBLE);
+                            mMainActivityViewModel.getPopularData().observe(this, new Observer<List<PopularModel>>() {
+                                @Override
+                                public void onChanged(@Nullable List<PopularModel> popularModels) {
+                                    if (popularModels != null) {
+                                        for (PopularModel popularModel : popularModels) {
+                                            Log.d(TAG, "Popular name: " + popularModel.getName());
+
+                                            if (popularModel.getMovie()) {
+                                                Movie movie = new Movie();
+
+                                                movie.setId(popularModel.getId());
+                                                movie.setTitle(popularModel.getName());
+                                                movie.setPoster_path(popularModel.getPoster_path());
+                                                mVideoPopularList.add(movie);
+                                            } else {
+                                                Tv tv = new Tv();
+
+                                                tv.setId(popularModel.getId());
+                                                tv.setName(popularModel.getName());
+                                                tv.setPoster_path(popularModel.getPoster_path());
+                                                mVideoPopularList.add(tv);
+                                            }
+                                        }
+                                    }
+                                    mPopularAdapter.setData(mVideoPopularList);
+                                }
+                            });
+
+                            mMainActivityViewModel.getTopRatedData().observe(this, new Observer<List<TopRatedModel>>() {
+                                @Override
+                                public void onChanged(@Nullable List<TopRatedModel> topRatedModels) {
+                                    if (topRatedModels != null) {
+                                        for (TopRatedModel topRatedModel : topRatedModels) {
+                                            Log.d(TAG, "TopRated name: " + topRatedModel.getName());
+
+                                            if (topRatedModel.getMovie()) {
+                                                Movie movie = new Movie();
+
+                                                movie.setId(topRatedModel.getId());
+                                                movie.setTitle(topRatedModel.getName());
+                                                movie.setPoster_path(topRatedModel.getPoster_path());
+                                                mVideoTopRatedList.add(movie);
+                                            } else {
+                                                Tv tv = new Tv();
+
+                                                tv.setId(topRatedModel.getId());
+                                                tv.setName(topRatedModel.getName());
+                                                tv.setPoster_path(topRatedModel.getPoster_path());
+                                                mVideoTopRatedList.add(tv);
+                                            }
+                                        }
+                                    }
+                                    mTopRatedAdapter.setData(mVideoTopRatedList);
+                                }
+                            });
+
+                            mMainActivityViewModel.getUpcomingData().observe(this, new Observer<List<UpcomingModel>>() {
+                                @Override
+                                public void onChanged(@Nullable List<UpcomingModel> upcomingModels) {
+                                    if (upcomingModels != null) {
+                                        for (UpcomingModel upcomingModel : upcomingModels) {
+                                            Log.d(TAG, "Upcoming name: " + upcomingModel.getName() + " " + upcomingModel.getPoster_path());
+
+                                            if (upcomingModel.getMovie()) {
+                                                Movie movie = new Movie();
+
+                                                movie.setId(upcomingModel.getId());
+                                                movie.setTitle(upcomingModel.getName());
+                                                movie.setPoster_path(upcomingModel.getPoster_path());
+                                                mVideoUpcomingList.add(movie);
+                                            } else {
+                                                Tv tv = new Tv();
+
+                                                tv.setId(upcomingModel.getId());
+                                                tv.setName(upcomingModel.getName());
+                                                tv.setPoster_path(upcomingModel.getPoster_path());
+                                                mVideoUpcomingList.add(tv);
+                                            }
+                                        }
+                                    }
+                                    mUpcomingAdapter.setData(mVideoUpcomingList);
+                                }
+                            });
+
+                        } else {
+                            Toast.makeText(this, "Offline mode without permission", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            }
+        }
     }
 
     private void initView() {
@@ -109,6 +246,10 @@ public class MainActivity extends AppCompatActivity {
         mTopRatedFilter = findViewById(R.id.topRatedFilter);
         mUpcomingFilter = findViewById(R.id.upcomingFilter);
         mOfflineMode = findViewById(R.id.offlineMode);
+        mShimmerViewContainer = findViewById(R.id.shimmer_view_container);
+        mPopularTitle = findViewById(R.id.popularTitle);
+        mTopRatedTitle = findViewById(R.id.topRatedTitle);
+        mUpcomingTitle = findViewById(R.id.upcomingTitle);
     }
 
     private void createLayoutManager() {
@@ -245,6 +386,8 @@ public class MainActivity extends AppCompatActivity {
         if (mIsMovieUpcomingResponded && mIsTvUpcomingResponded) {
             mUpcomingAdapter.setData(mVideoUpcomingList);
 
+            showUI();
+
             if (mWriteExternalStorageGranted && Utils.isNetworkAvailable(this)) {
                 mMainActivityViewModel.removeAllUpcomingData();
 
@@ -355,134 +498,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
-        if (requestCode == REQUEST_CODE) {
-            for (int i = 0; i < permissions.length; i++) {
-                String permission = permissions[i];
-                int grantResult = grantResults[i];
-
-                if (permission.equals(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    if (grantResult == PackageManager.PERMISSION_GRANTED) {
-                        mWriteExternalStorageGranted = true;
-                        if (Utils.isNetworkAvailable(this)) {
-                            Utils.deleteRecursive(new File(Constants.PATH, Constants.FOLDER_NAME));
-                            Utils.createFolder();
-                        }
-                    } else {
-                        mWriteExternalStorageGranted = false;
-                        Toast.makeText(this, "Offline disabled", Toast.LENGTH_LONG).show();
-                    }
-
-                    if (Utils.isNetworkAvailable(this)) {
-
-                        getTvPopularList();
-                        getMoviePopularList();
-
-                        getTvTopRatedeList();
-                        getMovieTopRatedList();
-
-                        getMovieUpcomingList();
-                        getTvUpcomingList();
-
-                    } else {
-                        if (mWriteExternalStorageGranted) {
-                            mOfflineMode.setVisibility(View.VISIBLE);
-                            mMainActivityViewModel.getPopularData().observe(this, new Observer<List<PopularModel>>() {
-                                @Override
-                                public void onChanged(@Nullable List<PopularModel> popularModels) {
-                                    if (popularModels != null) {
-                                        for (PopularModel popularModel : popularModels) {
-                                            Log.d(TAG, "Popular name: " + popularModel.getName());
-
-                                            if (popularModel.getMovie()) {
-                                                Movie movie = new Movie();
-
-                                                movie.setId(popularModel.getId());
-                                                movie.setTitle(popularModel.getName());
-                                                movie.setPoster_path(popularModel.getPoster_path());
-                                                mVideoPopularList.add(movie);
-                                            } else {
-                                                Tv tv = new Tv();
-
-                                                tv.setId(popularModel.getId());
-                                                tv.setName(popularModel.getName());
-                                                tv.setPoster_path(popularModel.getPoster_path());
-                                                mVideoPopularList.add(tv);
-                                            }
-                                        }
-                                    }
-                                    mPopularAdapter.setData(mVideoPopularList);
-                                }
-                            });
-
-                            mMainActivityViewModel.getTopRatedData().observe(this, new Observer<List<TopRatedModel>>() {
-                                @Override
-                                public void onChanged(@Nullable List<TopRatedModel> topRatedModels) {
-                                    if (topRatedModels != null) {
-                                        for (TopRatedModel topRatedModel : topRatedModels) {
-                                            Log.d(TAG, "TopRated name: " + topRatedModel.getName());
-
-                                            if (topRatedModel.getMovie()) {
-                                                Movie movie = new Movie();
-
-                                                movie.setId(topRatedModel.getId());
-                                                movie.setTitle(topRatedModel.getName());
-                                                movie.setPoster_path(topRatedModel.getPoster_path());
-                                                mVideoTopRatedList.add(movie);
-                                            } else {
-                                                Tv tv = new Tv();
-
-                                                tv.setId(topRatedModel.getId());
-                                                tv.setName(topRatedModel.getName());
-                                                tv.setPoster_path(topRatedModel.getPoster_path());
-                                                mVideoTopRatedList.add(tv);
-                                            }
-                                        }
-                                    }
-                                    mTopRatedAdapter.setData(mVideoTopRatedList);
-                                }
-                            });
-
-                            mMainActivityViewModel.getUpcomingData().observe(this, new Observer<List<UpcomingModel>>() {
-                                @Override
-                                public void onChanged(@Nullable List<UpcomingModel> upcomingModels) {
-                                    if (upcomingModels != null) {
-                                        for (UpcomingModel upcomingModel : upcomingModels) {
-                                            Log.d(TAG, "Upcoming name: " + upcomingModel.getName() + " " + upcomingModel.getPoster_path());
-
-                                            if (upcomingModel.getMovie()) {
-                                                Movie movie = new Movie();
-
-                                                movie.setId(upcomingModel.getId());
-                                                movie.setTitle(upcomingModel.getName());
-                                                movie.setPoster_path(upcomingModel.getPoster_path());
-                                                mVideoUpcomingList.add(movie);
-                                            } else {
-                                                Tv tv = new Tv();
-
-                                                tv.setId(upcomingModel.getId());
-                                                tv.setName(upcomingModel.getName());
-                                                tv.setPoster_path(upcomingModel.getPoster_path());
-                                                mVideoUpcomingList.add(tv);
-                                            }
-                                        }
-                                    }
-                                    mUpcomingAdapter.setData(mVideoUpcomingList);
-                                }
-                            });
-
-                        } else {
-                            Toast.makeText(this, "Offline mode without permission", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                }
-            }
-        }
-    }
-
     public static class DownloadImageAsnyc extends AsyncTask<String, Void, Bitmap> {
 
         String downloadPath = "";
@@ -517,6 +532,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    private void showUI() {
+        mShimmerViewContainer.stopShimmerAnimation();
+        mShimmerViewContainer.setVisibility(View.GONE);
+
+        mPopularTitle.setVisibility(View.VISIBLE);
+        mTopRatedTitle.setVisibility(View.VISIBLE);
+        mUpcomingTitle.setVisibility(View.VISIBLE);
+
+        mPopularFilter.setVisibility(View.VISIBLE);
+        mTopRatedFilter.setVisibility(View.VISIBLE);
+        mUpcomingFilter.setVisibility(View.VISIBLE);
     }
 }
 

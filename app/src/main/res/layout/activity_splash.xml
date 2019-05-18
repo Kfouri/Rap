@@ -12,6 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/image_splash_margin_start"
         android:layout_marginTop="@dimen/image_splash_margin_top"
+        android:layout_marginEnd="30dp"
         android:src="@drawable/logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

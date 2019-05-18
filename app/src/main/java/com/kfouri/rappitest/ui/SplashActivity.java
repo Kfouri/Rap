@@ -1,7 +1,6 @@
 package com.kfouri.rappitest.ui;
 
 import android.content.Intent;
-import android.media.Image;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -15,7 +14,10 @@ import com.kfouri.rappitest.R;
 public class SplashActivity extends AppCompatActivity {
 
     private static final int SPLASH_TIME_OUT = 2000;
-    private ImageView imageView;
+    private static final int ROTATION_ANGLE = 18;
+    private static final int ROTATION_DURATION = 1000;
+
+    private ImageView mImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,7 +27,7 @@ public class SplashActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_splash);
 
-        imageView = findViewById(R.id.imageViewSplash);
+        mImageView = findViewById(R.id.imageViewSplash);
 
         setHandler();
 
@@ -35,8 +37,9 @@ public class SplashActivity extends AppCompatActivity {
     private void animateLogo() {
 
         Animation fadeAnimation = AnimationUtils.loadAnimation(this, R.anim.fade_splash);
-        imageView.startAnimation(fadeAnimation);
+        mImageView.startAnimation(fadeAnimation);
 
+        mImageView.animate().rotation(ROTATION_ANGLE).setDuration(ROTATION_DURATION);
     }
 
     void setHandler() {

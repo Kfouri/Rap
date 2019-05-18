@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="@dimen/placeholder_title_width"
+        android:layout_height="@dimen/placeholder_title_height"
+        android:layout_marginStart="@dimen/placeholder_title_margin_start"
+        android:layout_marginTop="@dimen/placeholder_title_margin_top"
+        android:background="#dddddd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:layout_width="@dimen/placeholder_filter_width"
+        android:layout_height="@dimen/placeholder_filter_height"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="@dimen/placeholder_filter_margin_top"
+        android:layout_marginEnd="@dimen/placeholder_filter_margin_en"
+        android:background="#dddddd"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="@dimen/placeholder_image_width"
+        android:layout_height="@dimen/placeholder_image_height"
+        android:layout_marginStart="@dimen/placeholder_image_margin_start"
+        android:layout_marginTop="@dimen/placeholder_image_margin_top"
+        android:background="#dddddd"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <View
+        android:id="@+id/view3"
+        android:layout_width="@dimen/placeholder_image2_width"
+        android:layout_height="@dimen/placeholder_image2_height"
+        android:layout_marginStart="@dimen/placeholder_image2_margin_start"
+        android:layout_marginTop="@dimen/placeholder_image2_margin_top"
+        android:background="#dddddd"
+        app:layout_constraintStart_toEndOf="@+id/view2"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+
+    <View
+        android:layout_width="@dimen/placeholder_image3_width"
+        android:layout_height="@dimen/placeholder_image3_height"
+        android:layout_marginStart="@dimen/placeholder_image3_margin_start"
+        android:layout_marginTop="@dimen/placeholder_image3_margin_top"
+        android:background="#dddddd"
+        app:layout_constraintStart_toEndOf="@+id/view3"
+        app:layout_constraintTop_toBottomOf="@+id/view" />
+</android.support.constraint.ConstraintLayout>

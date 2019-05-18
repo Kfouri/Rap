@@ -4,7 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:shimmer="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.MainActivity">
+
+    <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/shimmer_view_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        shimmer:duration="800"
+        tools:ignore="MissingConstraints">
+
+        <include layout="@layout/recipe_placeholder_item"/>
+        <include layout="@layout/recipe_placeholder_item"
+            android:layout_marginTop="@dimen/recipe_placeholder_item2_margin_top"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content" />
+        <include layout="@layout/recipe_placeholder_item"
+            android:layout_marginTop="@dimen/recipe_placeholder_item3_margin_top"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"/>
+
+    </com.facebook.shimmer.ShimmerFrameLayout>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -29,6 +51,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/popularTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/popularity_margin_start"
@@ -38,6 +61,7 @@
                 android:textColor="#000000"
                 android:textSize="@dimen/popularity_text_size"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/popularList"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/offlineMode" />
@@ -61,11 +85,13 @@
                 android:focusable="true"
                 android:hint="@string/searchPopular"
                 android:inputType="text"
+                android:visibility="gone"
                 android:textSize="@dimen/popular_filter_text_size"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/offlineMode" />
 
             <TextView
+                android:id="@+id/topRatedTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/toprated_title_margin_start"
@@ -74,6 +100,7 @@
                 android:textColor="#000000"
                 android:textSize="@dimen/toprated_title_text_size"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/topRatedList"
                 app:layout_constraintStart_toStartOf="parent" />
 
@@ -96,10 +123,10 @@
                 android:textSize="@dimen/topRatedFilter_text_size"
                 android:inputType="text"
                 android:hint="@string/searchTopRated"
+                android:visibility="gone"
                 android:drawableStart="@drawable/search"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/popularList" />
-
 
             <EditText
                 android:id="@+id/upcomingFilter"
@@ -109,6 +136,7 @@
                 android:layout_marginEnd="@dimen/upcomingFilter_margin_end"
                 android:textSize="@dimen/upcomingFilter_text_size"
                 android:inputType="text"
+                android:visibility="gone"
                 android:hint="@string/searchUpcoming"
                 android:drawableStart="@drawable/search"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -126,6 +154,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/upcomingFilter" />
 
             <TextView
+                android:id="@+id/upcomingTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/upcoming_title_margin_start"
@@ -134,6 +163,7 @@
                 android:textColor="#000000"
                 android:textSize="@dimen/upcoming_title_margin_text_size"
                 android:textStyle="bold"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/upcomingList"
                 app:layout_constraintStart_toStartOf="parent" />
         </android.support.constraint.ConstraintLayout>
