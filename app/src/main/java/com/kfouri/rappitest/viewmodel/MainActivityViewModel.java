@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 
 import com.kfouri.rappitest.model.MovieResponse;
 import com.kfouri.rappitest.model.TvResponse;
-import com.kfouri.rappitest.model.Video;
 import com.kfouri.rappitest.persist.dao.PopularDao;
 import com.kfouri.rappitest.persist.dao.TopRatedDao;
 import com.kfouri.rappitest.persist.dao.UpcomingDao;
