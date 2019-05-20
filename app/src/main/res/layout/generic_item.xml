@@ -6,10 +6,10 @@
 
     <ImageView
         android:id="@+id/image_poster"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/generic_item_image_margin_end"
-        android:scaleType="fitCenter"
+        android:layout_width="@dimen/generic_image_poster_width"
+        android:layout_height="@dimen/generic_image_poster_height"
+        android:scaleType="fitXY"
+        android:layout_marginEnd="@dimen/generic_image_poster_margin_end"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

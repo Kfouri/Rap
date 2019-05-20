@@ -69,7 +69,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/popularList"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/popular_list_height"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/popular_list_margin_start"
                 android:layout_marginEnd="@dimen/popular_list_margin_end"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -107,7 +107,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/topRatedList"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/topRatedList_height"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/topRatedList_margin_start"
                 android:layout_marginEnd="@dimen/topRatedList_margin_end"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -145,7 +145,7 @@
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/upcomingList"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/upcomingList_height"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/upcomingList_margin_start"
                 android:layout_marginEnd="@dimen/upcomingList_margin_end"
                 android:layout_marginBottom="@dimen/upcomingList_margin_bottom"
