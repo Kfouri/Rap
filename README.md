@@ -18,12 +18,19 @@ Ingresando a las peliculas/series se puede ver el detalle de cada una como por e
 
 * Vistas
   * SplashActivity
+     Pantalla inicial. 
   * MainActivity
+     Muestra tres listados de películas y series (Popular, Top Ranking y Próximos Lanzamientos), también permite filtrar información por cada listado.
   * MovieDataActivity
+     Muestra el detalle de la película seleccionada.
   * TvDataActivity
+     Muestra el detalle de la serie seleccionada.
   * GenericAdapter
+     Permite adaptar los datos de las películas y series al componente visual (RecycledView)
   * SeasonAdapter
+     Permite adaptar los datos de las temporadas dentro del detalle de las series al componente visual (RecycledView)
 * Modelos
+   Las clases de la capa de modelo nos permiten albergar información recibida desde el backend (ROOM/Retrofit) y se envían a la capa de Controlador para que luego sea procesada y enviada a la capa de Vistas. 
   * Movie
   * Tv
   * Video
@@ -35,24 +42,28 @@ Ingresando a las peliculas/series se puede ver el detalle de cada una como por e
   * TvDataResponse
   * TvResponse
 * Controlador
+  Las clases de la capa Controlador nos permiten intermediar entre las capas de Modelo y la capa de Vistas. Esta capa tiene el poder de manipular la información recibida desde o hacia el backend/vistas.
   * MainActivityViewModel
   * APIInterface
 * Persistencia
    * Dao
+     Las clase Dao tienen la responsabilidad de la persistencia (ABMC) de los datos, en este caso con ROOM.
      * PopularDao
      * TopRatedDao
      * UpcomingDao
    * Database
+     La clase Database nos permite definir la configuración de persistencia con ROOM
      * Database
    * Model
+     Estas clases de modelo nos permiten albergar información para el manejo de la persistencia de dato.
      * PopularModel
      * TopRatedModel
      * UpcomingModel
 * Helpers
+  Las clases de tipo Helpers nos permiten usar metodos y constantes (datos) a lo largo de toda la aplicación.
   * Utils
   * Constants
 
-## Responsabilidades
 
 ##### En qué consiste el principio de responsabilidad única? Cuál es su propósito?
    El Principio de responsabilidad única es el primero de los cinco que componen SOLID que basicamente dice que un objeto debe realizar una única cosa, debe tener solo un objetivo, debe ser atomico. Esto nos protege de futuros cambios.
