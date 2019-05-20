@@ -3,21 +3,20 @@
     <string name="popularity">Popularity</string>
     <string name="topRated">Top Rated</string>
     <string name="upcoming">Upcoming</string>
-    <string name="searchUpcoming">Proximos Lanzamientos</string>
+    <string name="searchUpcoming">Upcoming</string>
     <string name="searchTopRated">Top Ranking</string>
-    <string name="searchPopular">Popular</string>
-    <string name="adult">Adulto:</string>
+    <string name="searchPopular">Popularity</string>
+    <string name="adult">Adult:</string>
     <string name="popularityVideoData">Popularity:</string>
-    <string name="adult_yes">Si</string>
+    <string name="adult_yes">Yes</string>
     <string name="adult_no">No</string>
     <string name="homepage">Homepage:</string>
-    <string name="season_plural">temporadas</string>
-    <string name="season_singular">temporada</string>
-    <string name="episode_plural">episodios</string>
-    <string name="episodes_singular">episodio</string>
-    <string name="season">Temporadas</string>
+    <string name="season_plural">seasons</string>
+    <string name="season_singular">season</string>
+    <string name="episode_plural">episodies</string>
+    <string name="episodes_singular">episodie</string>
+    <string name="season">Season</string>
     <string name="information_cached">Looking for information cached</string>
-    <string name="connection_error">"No es posible conectarse con RappiTest"</string>
-    <string name="offline_mode">Modo Offline</string>
-
+    <string name="connection_error">"It is not possible to connect with RappiTest"</string>
+    <string name="offline_mode">Offline mode</string>
 </resources>

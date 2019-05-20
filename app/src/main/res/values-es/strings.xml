@@ -1,0 +1,22 @@
+<resources>
+    <string name="app_name">RappiTest</string>
+    <string name="popularity">Popularidad</string>
+    <string name="topRated">Top Ranqueados</string>
+    <string name="upcoming">Próximos Lanzamientos</string>
+    <string name="searchUpcoming">Próximos Lanzamientos</string>
+    <string name="searchTopRated">Top Ranqueados</string>
+    <string name="searchPopular">Popularidad</string>
+    <string name="adult">Adulto:</string>
+    <string name="popularityVideoData">Popular:</string>
+    <string name="adult_yes">Si</string>
+    <string name="adult_no">No</string>
+    <string name="homepage">Homepage:</string>
+    <string name="season_plural">temporadas</string>
+    <string name="season_singular">temporada</string>
+    <string name="episode_plural">episodios</string>
+    <string name="episodes_singular">episodio</string>
+    <string name="season">Temporadas</string>
+    <string name="information_cached">Buscando información en la cache</string>
+    <string name="connection_error">"No es posible conectarse con RappiTest"</string>
+    <string name="offline_mode">Modo Offline</string>
+</resources>
