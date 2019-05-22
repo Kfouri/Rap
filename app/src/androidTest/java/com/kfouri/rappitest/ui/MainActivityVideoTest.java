@@ -56,7 +56,7 @@ public class MainActivityVideoTest {
                                         withClassName(is("android.widget.ScrollView")),
                                         0),
                                 3)));
-        appCompatEditText.perform(scrollTo(), replaceText("game of"), closeSoftKeyboard());
+        appCompatEditText.perform(scrollTo(), replaceText("juego de"), closeSoftKeyboard());
 
         Thread.sleep(2000);
 
@@ -134,7 +134,7 @@ public class MainActivityVideoTest {
                                         withClassName(is("android.widget.ScrollView")),
                                         0),
                                 7)));
-        appCompatEditText.perform(scrollTo(), replaceText("pro"), closeSoftKeyboard());
+        appCompatEditText.perform(scrollTo(), replaceText("rock"), closeSoftKeyboard());
 
         Thread.sleep(2000);
 
@@ -150,7 +150,7 @@ public class MainActivityVideoTest {
         Thread.sleep(2000);
 
         ViewInteraction textView = onView(
-                allOf(withId(R.id.txtTitle), withText("Richard Says Goodbye"),
+                allOf(withId(R.id.txtTitle), withText("Rocketman"),
                         childAtPosition(
                                 allOf(withId(R.id.generalConstraintLayout),
                                         childAtPosition(
@@ -158,7 +158,7 @@ public class MainActivityVideoTest {
                                                 0)),
                                 1),
                         isDisplayed()));
-        textView.check(matches(withText("Richard Says Goodbye")));
+        textView.check(matches(withText("Rocketman")));
     }
 
     private static Matcher<View> childAtPosition(
